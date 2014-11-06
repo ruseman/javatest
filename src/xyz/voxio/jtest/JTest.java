@@ -1,10 +1,7 @@
 package xyz.voxio.jtest;
 
-import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.EventQueue;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,107 +16,62 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-
 public class JTest
 {
-	
 	public enum State
 	{
 		CLOSING, INITIALIZING, RUNNING;
 	}
+	
+	public static String			GITHUB_URI					= ("https://github.com");
+	
+	public static JTest				instance;
 
-	public static String		GITHUB_URI					= ("https://github.com");
+	public static String			ISSUES_URI					= ("https://github.com/Commador/JavaTest/issues");
 
-	public static JTest			instance;
+	public static boolean			needsUpdate;
 	
-	public static String		ISSUES_URI					= ("https://github.com/Commador/JavaTest/issues");
-	
-	public static boolean		needsUpdate;
+	public static List<Question>	questions;
 
-	public static String		QUESTIONS_FILE_LOCATIONS	= "questions.cfg";
+	public static String			QUESTIONS_FILE_LOCATIONS	= "questions.cfg";
 	
-	public static final String	QUESTIONS_FILE_URI_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
+	public static final String		QUESTIONS_FILE_URI_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
 
-	public static String		SOURCE_URI					= ("https://github.com/Commador/JavaTest");
-	
-	public static String		VERSION						= "1.0.0";
-	
-	public static void exitAll()
-	{
-		System.exit(0);
-	}
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(final String[] args)
-	{
-		EventQueue.invokeLater(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					JTest.instance = new JTest();
-					JTest.instance.frame.setVisible(true);
-				}
-				catch (final Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-			
-			@Override
-			public void start()
-			{
-				this.setName("gui_thread");
-				super.start();
-			}
-		});
-	}
+	public static String			SOURCE_URI					= ("https://github.com/Commador/JavaTest");
 
-	public List<Question>	questions;
+	public static String			VERSION						= "1.0.0";
 
-	private Question		currentQuestion;
+	private static Question			currentQuestion;
 	
-	private JFrame			frame;
+	private static State			state;
+	
+	private static AppWindow		window;
 
-	private State			state;
-	
 	/**
 	 * Create the application.
 	 */
-	public JTest()
-	{
-		this.initialize();
-	}
 	
-	public void changeState(final State state)
+	public static void changeState(final State state)
 	{
 		final String str = null;
-		this.changeState(state, str);
+		JTest.changeState(state, str);
 	}
-	
-	public void changeState(final State state, final String msg)
+
+	public static void changeState(final State state, final String msg)
 	{
 		try
 		{
 			try
 			{
 				String newmsg = "State changed from "
-						+ this.getState().toString() + " to "
+						+ JTest.getState().toString() + " to "
 						+ state.toString();
 				if ((msg != null) && !msg.isEmpty())
 				{
 					newmsg += ": " + msg;
 				}
 				Logger.getLogger().log(Level.INFO, newmsg);
-				this.setState(state);
+				JTest.setState(state);
 			}
 			catch (final Exception e)
 			{
@@ -131,29 +83,19 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-	
-	public void exit()
+
+	public static void exit()
 	{
-		this.setState(State.CLOSING);
+		JTest.setState(State.CLOSING);
 		JTest.exitAll();
 	}
+
+	public static void exitAll()
+	{
+		System.exit(0);
+	}
 	
-	public String getButtonContent()
-	{
-		return "";
-	}
-
-	public Question getCurrentQuestion()
-	{
-		return this.currentQuestion;
-	}
-
-	public State getState()
-	{
-		return this.state;
-	}
-
-	private List<Question> getQuestions() throws Exception
+	public static List<Question> genQuestions() throws Exception
 	{
 		final List<Question> questions = new ArrayList<Question>();
 		final File qfile = new File(JTest.QUESTIONS_FILE_LOCATIONS);
@@ -178,122 +120,89 @@ public class JTest
 		}
 		return questions;
 	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize()
+	
+	public static String getButtonContent()
 	{
-		this.setState(State.INITIALIZING);
-		this.frame = new JFrame();
-		this.frame.setBounds(100, 100, 450, 300);
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		return "";
+	}
+	
+	public static Question getCurrentQuestion()
+	{
+		return JTest.currentQuestion;
+	}
 
-		final JMenuBar menuBar = new JMenuBar();
-		this.frame.getContentPane().add(menuBar, BorderLayout.NORTH);
-		
-		final JMenu menuJavaTest = new JMenu("JavaTest");
-		menuBar.add(menuJavaTest);
-		
-		final JMenuItem menuButtonExit = new JMenuItem("Exit");
-		menuButtonExit.addMouseListener(new MouseAdapter()
+	public static State getState()
+	{
+		return JTest.state;
+	}
+
+	public static AppWindow getWindow()
+	{
+		return JTest.window;
+	}
+
+	public static void initialize()
+	{
+		EventQueue.invokeLater(new Runnable()
 		{
 			@Override
-			public void mousePressed(final MouseEvent e)
+			public void run()
 			{
-				JTest.this.exit();
+				JTest.window = new AppWindow();
+				JTest.window.enable();
+				
 			}
 		});
-		menuJavaTest.add(menuButtonExit);
-		
-		final JMenu menuHelp = new JMenu("Help");
-		menuBar.add(menuHelp);
-		
-		final JMenuItem menuButtonSource = new JMenuItem("Source");
-		menuButtonSource.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mousePressed(final MouseEvent e)
-			{
-				try
-				{
-					Desktop.getDesktop().browse(new URI(JTest.SOURCE_URI));
-				}
-				catch (final IOException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (final URISyntaxException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		});
-		
-		final JMenuItem menuButtonGithub = new JMenuItem("Github");
-		menuButtonGithub.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mousePressed(final MouseEvent e)
-			{
-				try
-				{
-					Desktop.getDesktop().browse(new URI(JTest.GITHUB_URI));
-				}
-				catch (final IOException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (final URISyntaxException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		});
-		menuHelp.add(menuButtonGithub);
-		menuHelp.add(menuButtonSource);
-		
-		final JMenuItem menuButtonIssues = new JMenuItem("Issues");
-		menuButtonIssues.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mousePressed(final MouseEvent e)
-			{
-				try
-				{
-					Desktop.getDesktop().browse(new URI(JTest.ISSUES_URI));
-				}
-				catch (final IOException e1)
-				{
-					e1.printStackTrace();
-				}
-				catch (final URISyntaxException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		});
-		menuHelp.add(menuButtonIssues);
+	}
+	
+	public static void main(final String[] args)
+	{
+		JTest.setWindow(new AppWindow());
+		JTest.initialize();
+		JTest.start();
+	}
+
+	public static void openWebPage(final String uri)
+	{
 		try
 		{
-			this.questions = this.getQuestions();
+			JTest.openWebPage(new URI(uri));
 		}
-		catch (final Exception e1)
+		catch (final URISyntaxException e)
 		{
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
-		this.setState(State.RUNNING);
-		// TODO game loop
-		this.setCurrentQuestion(null);
+	}
+
+	public static void openWebPage(final URI uri)
+	{
+		try
+		{
+			Desktop.getDesktop().browse(uri);
+		}
+		catch (final IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static void setCurrentQuestion(final Question currentQuestion)
+	{
+		JTest.currentQuestion = currentQuestion;
+	}
+
+	public static void setWindow(final AppWindow window)
+	{
+		JTest.window = window;
 	}
 	
-	private void setCurrentQuestion(final Question currentQuestion)
+	public static void start()
 	{
-		this.currentQuestion = currentQuestion;
+
 	}
 	
-	private void setState(final State state)
+	private static void setState(final State state)
 	{
-		this.state = state;
+		JTest.state = state;
 	}
 }
