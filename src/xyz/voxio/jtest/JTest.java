@@ -23,38 +23,37 @@ public class JTest
 		CLOSING, INITIALIZING, RUNNING;
 	}
 
-	public static String			GITHUB_URI					= ("https://github.com");
+	public static String			GITHUB_URI						= ("https://github.com");
 
 	public static JTest				instance;
 	
-	public static String			ISSUES_URI					= ("https://github.com/Commador/JavaTest/issues");
+	public static String			ISSUES_URI						= ("https://github.com/Commador/JavaTest/issues");
 	
 	public static boolean			needsUpdate;
 
 	public static List<Question>	questions;
 	
-	public static String			QUESTIONS_FILE_LOCATIONS	= "questions.cfg";
+	public static String			QUESTIONS_FILE_LOCATIONS		= "jtest/questions.cfg";
 
-	public static final String		QUESTIONS_FILE_URI_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
+	public static final String		QUESTIONS_FILE_URI_REMOTE		= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
 	
-	public static String			SOURCE_URI					= ("https://github.com/Commador/JavaTest");
+	public static final String		QUESTIONS_FILE_VERSION_URI		= "jtest/VERSION";
+
+	public static String			SOURCE_URI						= ("https://github.com/Commador/JavaTest");
 	
-	public static String			VERSION						= "1.0.0";
+	public static String			VERSION							= "1.0";
 	
+	public static final String		VERSION_REMOTE_QUESTIONS_URI	= "https://github.com/Commador/JavaTestQuestions/blob/master/VERSION";					// TODO
+																																							
 	private static Question			currentQuestion;
 
 	private static State			state;
 
 	private static AppWindow		window;
 	
-	/**
-	 * Create the application.
-	 */
-
 	public static void changeState(final State state)
 	{
-		final String str = null;
-		JTest.changeState(state, str);
+		JTest.changeState(state, null);
 	}
 	
 	public static void changeState(final State state, final String msg)
@@ -89,7 +88,7 @@ public class JTest
 		JTest.setState(State.CLOSING);
 		JTest.exitAll();
 	}
-	
+
 	public static void exitAll()
 	{
 		System.exit(0);
@@ -125,7 +124,7 @@ public class JTest
 	{
 		return "";
 	}
-
+	
 	public static Question getCurrentQuestion()
 	{
 		return JTest.currentQuestion;
@@ -136,13 +135,22 @@ public class JTest
 		return JTest.state;
 	}
 	
+	public static String getVersionRemote()
+	{
+		// TODO
+		return null;
+	}
+
 	public static AppWindow getWindow()
 	{
 		return JTest.window;
 	}
-	
+
 	public static void initialize()
 	{
+		JTest.changeState(State.INITIALIZING);
+		JTest.needsUpdate = JTest.needsUpdate(JTest.VERSION,
+				JTest.getVersionRemote());
 		EventQueue.invokeLater(new Runnable()
 		{
 			@Override
@@ -150,7 +158,6 @@ public class JTest
 			{
 				JTest.window = new AppWindow();
 				JTest.window.enable();
-
 			}
 		});
 	}
@@ -160,6 +167,13 @@ public class JTest
 		JTest.setWindow(new AppWindow());
 		JTest.initialize();
 		JTest.start();
+	}
+
+	public static boolean needsUpdate(final String local, final String remote)
+	{
+		final double ld = Double.parseDouble(local);
+		final double rd = Double.parseDouble(remote);
+		return rd > ld;
 	}
 	
 	public static void openWebPage(final String uri)
@@ -198,12 +212,12 @@ public class JTest
 
 	public static void showAboutWindow()
 	{
-
+		
 	}
 
 	public static void start()
 	{
-		
+		JTest.changeState(State.RUNNING);
 	}
 	
 	private static void setState(final State state)

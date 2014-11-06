@@ -1,7 +1,6 @@
 package xyz.voxio.jtest;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -14,30 +13,6 @@ import javax.swing.JSeparator;
 
 public class AppWindow
 {
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(final String[] args)
-	{
-		EventQueue.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					final AppWindow window = new AppWindow();
-					window.frmJtest.setVisible(true);
-				}
-				catch (final Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
 	private JFrame	frmJtest;
 	
 	/**
