@@ -22,41 +22,41 @@ public class JTest
 	{
 		CLOSING, INITIALIZING, RUNNING;
 	}
-	
+
 	public static String			GITHUB_URI					= ("https://github.com");
-	
+
 	public static JTest				instance;
-
+	
 	public static String			ISSUES_URI					= ("https://github.com/Commador/JavaTest/issues");
-
+	
 	public static boolean			needsUpdate;
-	
+
 	public static List<Question>	questions;
-
+	
 	public static String			QUESTIONS_FILE_LOCATIONS	= "questions.cfg";
-	
+
 	public static final String		QUESTIONS_FILE_URI_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
-
+	
 	public static String			SOURCE_URI					= ("https://github.com/Commador/JavaTest");
-
+	
 	public static String			VERSION						= "1.0.0";
-
+	
 	private static Question			currentQuestion;
-	
-	private static State			state;
-	
-	private static AppWindow		window;
 
+	private static State			state;
+
+	private static AppWindow		window;
+	
 	/**
 	 * Create the application.
 	 */
-	
+
 	public static void changeState(final State state)
 	{
 		final String str = null;
 		JTest.changeState(state, str);
 	}
-
+	
 	public static void changeState(final State state, final String msg)
 	{
 		try
@@ -83,18 +83,18 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void exit()
 	{
 		JTest.setState(State.CLOSING);
 		JTest.exitAll();
 	}
-
+	
 	public static void exitAll()
 	{
 		System.exit(0);
 	}
-	
+
 	public static List<Question> genQuestions() throws Exception
 	{
 		final List<Question> questions = new ArrayList<Question>();
@@ -120,27 +120,27 @@ public class JTest
 		}
 		return questions;
 	}
-	
+
 	public static String getButtonContent()
 	{
 		return "";
 	}
-	
+
 	public static Question getCurrentQuestion()
 	{
 		return JTest.currentQuestion;
 	}
-
+	
 	public static State getState()
 	{
 		return JTest.state;
 	}
-
+	
 	public static AppWindow getWindow()
 	{
 		return JTest.window;
 	}
-
+	
 	public static void initialize()
 	{
 		EventQueue.invokeLater(new Runnable()
@@ -150,18 +150,18 @@ public class JTest
 			{
 				JTest.window = new AppWindow();
 				JTest.window.enable();
-				
+
 			}
 		});
 	}
-	
+
 	public static void main(final String[] args)
 	{
 		JTest.setWindow(new AppWindow());
 		JTest.initialize();
 		JTest.start();
 	}
-
+	
 	public static void openWebPage(final String uri)
 	{
 		try
@@ -173,7 +173,7 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void openWebPage(final URI uri)
 	{
 		try
@@ -185,20 +185,25 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void setCurrentQuestion(final Question currentQuestion)
 	{
 		JTest.currentQuestion = currentQuestion;
 	}
-
+	
 	public static void setWindow(final AppWindow window)
 	{
 		JTest.window = window;
 	}
-	
-	public static void start()
+
+	public static void showAboutWindow()
 	{
 
+	}
+
+	public static void start()
+	{
+		
 	}
 	
 	private static void setState(final State state)

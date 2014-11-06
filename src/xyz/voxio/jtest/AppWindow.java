@@ -14,7 +14,7 @@ import javax.swing.JSeparator;
 
 public class AppWindow
 {
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -28,7 +28,7 @@ public class AppWindow
 				try
 				{
 					final AppWindow window = new AppWindow();
-					window.frame.setVisible(true);
+					window.frmJtest.setVisible(true);
 				}
 				catch (final Exception e)
 				{
@@ -37,9 +37,9 @@ public class AppWindow
 			}
 		});
 	}
-
-	private JFrame	frame;
-
+	
+	private JFrame	frmJtest;
+	
 	/**
 	 * Create the application.
 	 */
@@ -47,30 +47,31 @@ public class AppWindow
 	{
 		this.initialize();
 	}
-
+	
 	public void enable()
 	{
-		this.frame.setVisible(true);
+		this.frmJtest.setVisible(true);
 	}
-
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize()
 	{
-		this.frame = new JFrame();
-		this.frame.setBounds(100, 100, 450, 300);
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		this.frmJtest = new JFrame();
+		this.frmJtest.setTitle("JTest");
+		this.frmJtest.setBounds(100, 100, 450, 300);
+		this.frmJtest.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		final JPanel panel = new JPanel();
-		this.frame.getContentPane().add(panel, BorderLayout.CENTER);
-
+		this.frmJtest.getContentPane().add(panel, BorderLayout.CENTER);
+		
 		final JMenuBar menuBar = new JMenuBar();
-		this.frame.getContentPane().add(menuBar, BorderLayout.NORTH);
-
+		this.frmJtest.getContentPane().add(menuBar, BorderLayout.NORTH);
+		
 		final JMenu mnJtest = new JMenu("JTest");
 		menuBar.add(mnJtest);
-
+		
 		final JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addMouseListener(new MouseAdapter()
 		{
@@ -81,10 +82,10 @@ public class AppWindow
 			}
 		});
 		mnJtest.add(mntmExit);
-
+		
 		final JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
-
+		
 		final JMenuItem mntmSource = new JMenuItem("Source");
 		mntmSource.addMouseListener(new MouseAdapter()
 		{
@@ -95,7 +96,7 @@ public class AppWindow
 			}
 		});
 		mnHelp.add(mntmSource);
-
+		
 		final JMenuItem mntmIssues = new JMenuItem("Issues");
 		mntmIssues.addMouseListener(new MouseAdapter()
 		{
@@ -106,16 +107,24 @@ public class AppWindow
 			}
 		});
 		mnHelp.add(mntmIssues);
-
+		
 		final JSeparator separator0 = new JSeparator();
 		mnHelp.add(separator0);
-
+		
 		final JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(final MouseEvent e)
+			{
+				JTest.showAboutWindow();
+			}
+		});
 		mnHelp.add(mntmAbout);
-
+		
 		final JSeparator separator1 = new JSeparator();
 		mnHelp.add(separator1);
-
+		
 		final JMenuItem mntmGithub = new JMenuItem("GitHub");
 		mntmGithub.addMouseListener(new MouseAdapter()
 		{
@@ -127,5 +136,5 @@ public class AppWindow
 		});
 		mnHelp.add(mntmGithub);
 	}
-
+	
 }
