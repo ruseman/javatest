@@ -300,4 +300,9 @@ public final class Logger extends java.util.logging.Logger
 	{
 		super.warning(msg);
 	}
+	
+	public static Logger getLogger()
+	{
+		return instance;
+	}
 }

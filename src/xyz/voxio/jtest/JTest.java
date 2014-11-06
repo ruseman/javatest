@@ -17,6 +17,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -239,5 +240,36 @@ public class JTest
 	private void setState(final State state)
 	{
 		this.state = state;
+	}
+	
+	public void changeState(State state)
+	{
+		String str = null;
+		changeState(state, str);
+	}
+	
+	public void changeState(State state, String msg)
+	{
+		try
+		{
+			try
+			{
+				String newmsg = "State changed from " + getState().toString() + " to " + state.toString();
+				if (msg != null && !msg.isEmpty())
+				{
+					newmsg += ": " + msg;
+				}
+				Logger.getLogger().log(Level.INFO, newmsg);
+				setState(state);
+			}
+			catch (Exception e)
+			{
+				throw new Exception("Change state failed");
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
