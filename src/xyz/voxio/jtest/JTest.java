@@ -2,17 +2,9 @@ package xyz.voxio.jtest;
 
 import java.awt.Desktop;
 import java.awt.EventQueue;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -28,8 +20,6 @@ public class JTest
 	public static JTest				instance;
 
 	public static String			ISSUES_URI						= ("https://github.com/Commador/JavaTest/issues");
-
-	public static boolean			needsUpdate;
 	
 	public static List<Question>	questions;
 
@@ -39,9 +29,7 @@ public class JTest
 
 	public static final String		QUESTIONS_FILE_VERSION_URI		= "jtest/VERSION";
 	
-	public static String			SOURCE_URI						= ("https://github.com/Commador/JavaTest");
-
-	public static String			VERSION							= "1.0";
+	public static final String		SOURCE_URI						= "https://github.com/Commador/JavaTest";
 
 	public static final String		VERSION_REMOTE_QUESTIONS_URI	= "https://github.com/Commador/JavaTestQuestions/blob/master/VERSION";					// TODO
 
@@ -94,30 +82,10 @@ public class JTest
 		System.exit(0);
 	}
 	
-	public static List<Question> genQuestions() throws Exception
+	public static List<Question> genQuestions()
 	{
-		final List<Question> questions = new ArrayList<Question>();
-		final File qfile = new File(JTest.QUESTIONS_FILE_LOCATIONS);
-		if (!qfile.exists() || JTest.needsUpdate)
-		{
-			final URL remote = new URL(JTest.QUESTIONS_FILE_URI_REMOTE);
-			final ReadableByteChannel rbc = Channels.newChannel(remote
-					.openStream());
-			final FileOutputStream fos = new FileOutputStream(qfile);
-			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-			rbc.close();
-			fos.close();
-		}
-		{
-			final BufferedReader br = new BufferedReader(new FileReader(qfile));
-			String line;
-			while ((line = br.readLine()) != null)
-			{
-				questions.add(new Question(line));
-			}
-			br.close();
-		}
-		return questions;
+		// TODO
+		return null;
 	}
 	
 	public static String getButtonContent()
@@ -130,15 +98,33 @@ public class JTest
 		return JTest.currentQuestion;
 	}
 
-	public static String getLocalVersion()
-	{
-		return "";//TODO
-	}
-	
-
 	public static State getState()
 	{
 		return JTest.state;
+	}
+	
+	public static String getVersionLocal()
+	{
+		try
+		{
+			String string;
+			try
+			{
+				string = "";
+			}
+			catch (final Exception e)
+			{
+				string = "0";
+				throw new InvalidLocalException(e);
+			}
+			return string;
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+			JTest.refreshLocal();
+			return JTest.getVersionLocal();
+		}
 	}
 	
 	public static String getVersionRemote()
@@ -155,8 +141,13 @@ public class JTest
 	public static void initialize()
 	{
 		JTest.changeState(State.INITIALIZING);
-		JTest.needsUpdate = JTest.needsUpdate(JTest.VERSION,
-				JTest.getVersionRemote());
+		{
+			if (JTest.needsUpdate())
+			{
+				JTest.updateQuestions();
+				
+			}
+		}
 		EventQueue.invokeLater(new Runnable()
 		{
 			@Override
@@ -167,7 +158,7 @@ public class JTest
 			}
 		});
 	}
-	
+
 	public static void main(final String[] args)
 	{
 		JTest.setWindow(new AppWindow());
@@ -175,8 +166,13 @@ public class JTest
 		JTest.start();
 	}
 
-	public static boolean needsUpdate(final String local, final String remote)
+	public static boolean needsUpdate()
 	{
+		String local;
+		local = JTest.getVersionLocal();
+		JTest.refreshLocal();
+		local = JTest.getVersionLocal();
+		final String remote = JTest.getVersionRemote();
 		final double ld = Double.parseDouble(local);
 		final double rd = Double.parseDouble(remote);
 		return rd > ld;
@@ -193,7 +189,7 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void openWebPage(final URI uri)
 	{
 		try
@@ -215,15 +211,26 @@ public class JTest
 	{
 		JTest.window = window;
 	}
-	
+
 	public static void showAboutWindow()
 	{
 
 	}
-	
+
 	public static void start()
 	{
 		JTest.changeState(State.RUNNING);
+	}
+	
+	public static void updateQuestions()
+	{
+		// TODO
+	}
+	
+	private static void refreshLocal()
+	{
+		// TODO redownload the remote to local
+		JTest.needsUpdate();
 	}
 
 	private static void setState(final State state)
