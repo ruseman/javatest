@@ -3,24 +3,24 @@ package xyz.voxio.jtest;
 public final class Question
 {
 	public static final String	SEP			= "|";
-	
+
 	public static final char	SEP_CHAR	= '|';
-
+	
 	private final String		answer;
-	
+
 	private final String		dummy0;
-	
+
 	private final String		dummy1;
-	
+
 	private final String		dummy2;
-
+	
 	private final String		question;
-
+	
 	public Question(final String qstring)
 	{
 		this(qstring.split("|"));
 	}
-
+	
 	public Question(final String question, final String answer,
 			final String dummy0, final String dummy1, final String dummy2)
 	{
@@ -30,12 +30,12 @@ public final class Question
 		this.dummy1 = dummy1;
 		this.dummy2 = dummy2;
 	}
-
+	
 	public Question(final String[] set)
 	{
 		this(set[0], set[1], set[2], set[3], set[4]);
 	}
-
+	
 	public String[] asStringArray()
 	{
 		final String[] sa = new String[5];
@@ -46,7 +46,7 @@ public final class Question
 		sa[4] = this.dummy2;
 		return sa;
 	}
-
+	
 	@Override
 	public boolean equals(final Object obj)
 	{
@@ -81,32 +81,32 @@ public final class Question
 		else if (!this.question.equals(other.question)) { return false; }
 		return true;
 	}
-
+	
 	public String getAnswer()
 	{
 		return this.answer;
 	}
-	
+
 	public String getDummy0()
 	{
 		return this.dummy0;
 	}
-
+	
 	public String getDummy1()
 	{
 		return this.dummy1;
 	}
-
+	
 	public String getDummy2()
 	{
 		return this.dummy2;
 	}
-
+	
 	public String getQuestion()
 	{
 		return this.question;
 	}
-
+	
 	@Override
 	public int hashCode()
 	{
@@ -124,7 +124,7 @@ public final class Question
 				+ ((this.question == null) ? 0 : this.question.hashCode());
 		return result;
 	}
-
+	
 	@Override
 	public String toString()
 	{
