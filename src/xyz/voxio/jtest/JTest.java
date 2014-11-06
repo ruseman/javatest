@@ -26,33 +26,33 @@ import javax.swing.JMenuItem;
 
 public class JTest
 {
-
+	
 	public enum State
 	{
 		CLOSING, INITIALIZING, RUNNING;
 	}
-	
+
 	public static String		GITHUB_URI					= ("https://github.com");
-	
+
 	public static JTest			instance;
-
+	
 	public static String		ISSUES_URI					= ("https://github.com/Commador/JavaTest/issues");
+	
+	public static boolean		needsUpdate;
 
-	public static String		QUESTIONS_FILE_LOCATIONS			= "questions.cfg";
+	public static String		QUESTIONS_FILE_LOCATIONS	= "questions.cfg";
 	
 	public static final String	QUESTIONS_FILE_URI_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
 
 	public static String		SOURCE_URI					= ("https://github.com/Commador/JavaTest");
 	
 	public static String		VERSION						= "1.0.0";
-
-	public static boolean	needsUpdate;
-
+	
 	public static void exitAll()
 	{
 		System.exit(0);
 	}
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -73,7 +73,7 @@ public class JTest
 					e.printStackTrace();
 				}
 			}
-
+			
 			@Override
 			public void start()
 			{
@@ -82,8 +82,10 @@ public class JTest
 			}
 		});
 	}
-	
+
 	public List<Question>	questions;
+
+	private Question		currentQuestion;
 	
 	private JFrame			frame;
 
@@ -96,11 +98,54 @@ public class JTest
 	{
 		this.initialize();
 	}
-
+	
+	public void changeState(final State state)
+	{
+		final String str = null;
+		this.changeState(state, str);
+	}
+	
+	public void changeState(final State state, final String msg)
+	{
+		try
+		{
+			try
+			{
+				String newmsg = "State changed from "
+						+ this.getState().toString() + " to "
+						+ state.toString();
+				if ((msg != null) && !msg.isEmpty())
+				{
+					newmsg += ": " + msg;
+				}
+				Logger.getLogger().log(Level.INFO, newmsg);
+				this.setState(state);
+			}
+			catch (final Exception e)
+			{
+				throw new Exception("Change state failed");
+			}
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public void exit()
 	{
 		this.setState(State.CLOSING);
 		JTest.exitAll();
+	}
+	
+	public String getButtonContent()
+	{
+		return "";
+	}
+
+	public Question getCurrentQuestion()
+	{
+		return this.currentQuestion;
 	}
 
 	public State getState()
@@ -108,24 +153,25 @@ public class JTest
 		return this.state;
 	}
 
-	private List<Question> getQuestions() throws URISyntaxException,
-	IOException
+	private List<Question> getQuestions() throws Exception
 	{
 		final List<Question> questions = new ArrayList<Question>();
 		final File qfile = new File(JTest.QUESTIONS_FILE_LOCATIONS);
-		if (!qfile.exists()||JTest.needsUpdate)
+		if (!qfile.exists() || JTest.needsUpdate)
 		{
-			URL remote = new URL(QUESTIONS_FILE_URI_REMOTE);
-			ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
-			FileOutputStream fos = new FileOutputStream(qfile);
+			final URL remote = new URL(JTest.QUESTIONS_FILE_URI_REMOTE);
+			final ReadableByteChannel rbc = Channels.newChannel(remote
+					.openStream());
+			final FileOutputStream fos = new FileOutputStream(qfile);
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			rbc.close();
 			fos.close();
 		}
 		{
-			BufferedReader br = new BufferedReader(new FileReader(qfile));
+			final BufferedReader br = new BufferedReader(new FileReader(qfile));
 			String line;
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null)
+			{
 				questions.add(new Question(line));
 			}
 			br.close();
@@ -142,13 +188,13 @@ public class JTest
 		this.frame = new JFrame();
 		this.frame.setBounds(100, 100, 450, 300);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		final JMenuBar menuBar = new JMenuBar();
 		this.frame.getContentPane().add(menuBar, BorderLayout.NORTH);
-
+		
 		final JMenu menuJavaTest = new JMenu("JavaTest");
 		menuBar.add(menuJavaTest);
-
+		
 		final JMenuItem menuButtonExit = new JMenuItem("Exit");
 		menuButtonExit.addMouseListener(new MouseAdapter()
 		{
@@ -159,10 +205,10 @@ public class JTest
 			}
 		});
 		menuJavaTest.add(menuButtonExit);
-
+		
 		final JMenu menuHelp = new JMenu("Help");
 		menuBar.add(menuHelp);
-
+		
 		final JMenuItem menuButtonSource = new JMenuItem("Source");
 		menuButtonSource.addMouseListener(new MouseAdapter()
 		{
@@ -183,7 +229,7 @@ public class JTest
 				}
 			}
 		});
-
+		
 		final JMenuItem menuButtonGithub = new JMenuItem("Github");
 		menuButtonGithub.addMouseListener(new MouseAdapter()
 		{
@@ -206,7 +252,7 @@ public class JTest
 		});
 		menuHelp.add(menuButtonGithub);
 		menuHelp.add(menuButtonSource);
-
+		
 		final JMenuItem menuButtonIssues = new JMenuItem("Issues");
 		menuButtonIssues.addMouseListener(new MouseAdapter()
 		{
@@ -237,41 +283,17 @@ public class JTest
 			e1.printStackTrace();
 		}
 		this.setState(State.RUNNING);
+		// TODO game loop
+		this.setCurrentQuestion(null);
 	}
-
+	
+	private void setCurrentQuestion(final Question currentQuestion)
+	{
+		this.currentQuestion = currentQuestion;
+	}
+	
 	private void setState(final State state)
 	{
 		this.state = state;
-	}
-	
-	public void changeState(State state)
-	{
-		String str = null;
-		changeState(state, str);
-	}
-	
-	public void changeState(State state, String msg)
-	{
-		try
-		{
-			try
-			{
-				String newmsg = "State changed from " + getState().toString() + " to " + state.toString();
-				if (msg != null && !msg.isEmpty())
-				{
-					newmsg += ": " + msg;
-				}
-				Logger.getLogger().log(Level.INFO, newmsg);
-				setState(state);
-			}
-			catch (Exception e)
-			{
-				throw new Exception("Change state failed");
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 }

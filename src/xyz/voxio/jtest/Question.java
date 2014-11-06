@@ -1,37 +1,47 @@
 package xyz.voxio.jtest;
 
+import java.util.LinkedHashSet;
+import java.util.Random;
+import java.util.Set;
+
 public final class Question
 {
 	public static final String	SEP			= "|";
-
+	
 	public static final char	SEP_CHAR	= '|';
-	
+
 	private final String		answer;
-
+	
 	private final String		dummy0;
-
+	
 	private final String		dummy1;
-
+	
 	private final String		dummy2;
-	
+
+	private final Set<Integer>	order;
+
 	private final String		question;
-	
-	public Question(final String qstring)
+
+	private final Random		rng			= new Random();
+
+	public Question(final String qstring) throws Exception
 	{
 		this(qstring.split("|"));
 	}
-	
+
 	public Question(final String question, final String answer,
 			final String dummy0, final String dummy1, final String dummy2)
+			throws Exception
 	{
 		this.question = question;
 		this.answer = answer;
 		this.dummy0 = dummy0;
 		this.dummy1 = dummy1;
 		this.dummy2 = dummy2;
+		this.order = this.getNewOrder();
 	}
-	
-	public Question(final String[] set)
+
+	public Question(final String[] set) throws Exception
 	{
 		this(set[0], set[1], set[2], set[3], set[4]);
 	}
@@ -46,7 +56,7 @@ public final class Question
 		sa[4] = this.dummy2;
 		return sa;
 	}
-	
+
 	@Override
 	public boolean equals(final Object obj)
 	{
@@ -81,32 +91,54 @@ public final class Question
 		else if (!this.question.equals(other.question)) { return false; }
 		return true;
 	}
-	
+
+	public int genRandInt()
+	{
+		final Random rand = new Random();
+		return rand.nextInt(3);
+	}
+
 	public String getAnswer()
 	{
 		return this.answer;
 	}
-
+	
 	public String getDummy0()
 	{
 		return this.dummy0;
 	}
-	
+
 	public String getDummy1()
 	{
 		return this.dummy1;
 	}
-	
+
 	public String getDummy2()
 	{
 		return this.dummy2;
 	}
-	
+
+	public Set<Integer> getNewOrder() throws Exception
+	{
+		final Set<Integer> generated = new LinkedHashSet<Integer>();
+		while (generated.size() < 4)
+		{
+			final Integer next = this.rng.nextInt(4) + 1;
+			generated.add(next);
+		}
+		return generated;
+	}
+
+	public Integer[] getOrder()
+	{
+		return (Integer[]) this.order.toArray();
+	}
+
 	public String getQuestion()
 	{
 		return this.question;
 	}
-	
+
 	@Override
 	public int hashCode()
 	{
