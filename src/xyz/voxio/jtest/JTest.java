@@ -46,6 +46,8 @@ public class JTest
 	
 	public static String		VERSION						= "1.0.0";
 
+	public static boolean	needsUpdate;
+
 	public static void exitAll()
 	{
 		System.exit(0);
@@ -111,7 +113,7 @@ public class JTest
 	{
 		final List<Question> questions = new ArrayList<Question>();
 		final File qfile = new File(JTest.QUESTIONS_FILE_LOCATIONS);
-		if (!qfile.exists())
+		if (!qfile.exists()||JTest.needsUpdate)
 		{
 			URL remote = new URL(QUESTIONS_FILE_URI_REMOTE);
 			ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
