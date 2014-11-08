@@ -5,8 +5,8 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class JTest
 {
@@ -14,95 +14,76 @@ public class JTest
 	{
 		CLOSING, INITIALIZING, RUNNING;
 	}
-	
+
 	public static String			GITHUB_URI						= ("https://github.com");
-	
+
 	public static JTest				instance;
-
+	
 	public static String			ISSUES_URI						= ("https://github.com/Commador/JavaTest/issues");
-	
+
 	public static List<Question>	questions;
-
+	
 	public static String			QUESTIONS_FILE_LOCATIONS		= "jtest/questions.cfg";
-	
+
 	public static final String		QUESTIONS_FILE_URI_REMOTE		= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
-
+	
 	public static final String		QUESTIONS_FILE_VERSION_URI		= "jtest/VERSION";
-	
+
 	public static final String		SOURCE_URI						= "https://github.com/Commador/JavaTest";
-
-	public static final String		VERSION_REMOTE_QUESTIONS_URI	= "https://github.com/Commador/JavaTestQuestions/blob/master/VERSION";					// TODO
-
+	
+	public static final String		VERSION_REMOTE_QUESTIONS_URI	= "https://github.com/Commador/JavaTestQuestions/blob/master/VERSION";
+																																							
 	private static Question			currentQuestion;
-	
-	private static State			state;
-	
-	private static AppWindow		window;
 
+	private static State			state;
+
+	private static AppWindow		window;
+	
 	public static void changeState(final State state)
 	{
 		JTest.changeState(state, null);
 	}
-
+	
 	public static void changeState(final State state, final String msg)
 	{
-		try
-		{
-			try
-			{
-				String newmsg = "State changed from "
-						+ JTest.getState().toString() + " to "
-						+ state.toString();
-				if ((msg != null) && !msg.isEmpty())
-				{
-					newmsg += ": " + msg;
-				}
-				Logger.getLogger().log(Level.INFO, newmsg);
-				JTest.setState(state);
-			}
-			catch (final Exception e)
-			{
-				throw new Exception("Change state failed");
-			}
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
+		setState(state);
 	}
-
+	
+	public static final String TITLE = "JTest";
+	
 	public static void exit()
 	{
 		JTest.setState(State.CLOSING);
 		JTest.exitAll();
 	}
-	
+
 	public static void exitAll()
 	{
 		System.exit(0);
 	}
-	
+
 	public static List<Question> genQuestions()
 	{
 		// TODO
-		return null;
+		List<Question> ql = new ArrayList<>();
+		return ql;
 	}
-	
+
 	public static String getButtonContent()
 	{
 		return "";
 	}
-
+	
 	public static Question getCurrentQuestion()
 	{
 		return JTest.currentQuestion;
 	}
-
+	
 	public static State getState()
 	{
 		return JTest.state;
 	}
-	
+
 	public static String getVersionLocal()
 	{
 		try
@@ -126,18 +107,20 @@ public class JTest
 			return JTest.getVersionLocal();
 		}
 	}
-	
+
 	public static String getVersionRemote()
 	{
 		// TODO
-		return null;
+		String version = "";
+		
+		return version;
 	}
-	
+
 	public static AppWindow getWindow()
 	{
 		return JTest.window;
 	}
-	
+
 	public static void initialize()
 	{
 		JTest.changeState(State.INITIALIZING);
@@ -145,7 +128,7 @@ public class JTest
 			if (JTest.needsUpdate())
 			{
 				JTest.updateQuestions();
-				
+
 			}
 		}
 		EventQueue.invokeLater(new Runnable()
@@ -158,26 +141,28 @@ public class JTest
 			}
 		});
 	}
-
+	
 	public static void main(final String[] args)
 	{
 		JTest.setWindow(new AppWindow());
 		JTest.initialize();
 		JTest.start();
 	}
-
+	
 	public static boolean needsUpdate()
 	{
-		String local;
+		/*String local;
 		local = JTest.getVersionLocal();
-		JTest.refreshLocal();
+		//JTest.refreshLocal();
 		local = JTest.getVersionLocal();
 		final String remote = JTest.getVersionRemote();
 		final double ld = Double.parseDouble(local);
 		final double rd = Double.parseDouble(remote);
-		return rd > ld;
+		return rd > ld;*/
+		return false;
+		//TODO
 	}
-
+	
 	public static void openWebPage(final String uri)
 	{
 		try
@@ -189,7 +174,7 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void openWebPage(final URI uri)
 	{
 		try
@@ -201,38 +186,38 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void setCurrentQuestion(final Question currentQuestion)
 	{
 		JTest.currentQuestion = currentQuestion;
 	}
-
+	
 	public static void setWindow(final AppWindow window)
 	{
 		JTest.window = window;
 	}
-
+	
 	public static void showAboutWindow()
 	{
-
+		
 	}
-
+	
 	public static void start()
 	{
 		JTest.changeState(State.RUNNING);
 	}
-	
+
 	public static void updateQuestions()
 	{
 		// TODO
 	}
-	
+
 	private static void refreshLocal()
 	{
 		// TODO redownload the remote to local
 		JTest.needsUpdate();
 	}
-
+	
 	private static void setState(final State state)
 	{
 		JTest.state = state;
