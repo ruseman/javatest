@@ -7,7 +7,7 @@ import java.util.Set;
 
 public final class Question implements Map<String, String>
 {
-	private final Map<String, String>	data	= new HashMap<>();
+	private final Map<String, String>	data	= new HashMap<String, String>();
 
 	public Question(final Map<? extends String, ? extends String> map)
 	{
