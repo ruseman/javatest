@@ -7,8 +7,8 @@ repositories {
 
 group = "xyz.voxio"
 archivesBaseName = 'javatest'
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
 
 dependencies {
   compile group: 'com.google.guava', name: 'guava', version: '12.0'
@@ -25,7 +25,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
 
 artifacts{
 	archives sourceJar
