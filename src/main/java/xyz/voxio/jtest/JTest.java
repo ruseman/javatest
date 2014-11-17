@@ -25,7 +25,7 @@ public class JTest
 	
 	public static String			QUESTIONS_FILE_LOCATIONS		= "jtest/questions.cfg";
 
-	public static final String		QUESTIONS_FILE_URI_REMOTE		= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.cfg";
+	public static final String		QUESTIONS_FILE_URI_REMOTE		= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
 	
 	public static final String		QUESTIONS_FILE_VERSION_URI		= "jtest/VERSION";
 
