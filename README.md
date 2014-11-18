@@ -1,7 +1,7 @@
 JavaTest
 ========
-Final project for CSC 111 
- 
+This application is my final project for CSC 111.  The goal was to write a GUI application that would quiz the user on Java related questions.
+
 Questions
 -
 The questions are hosted [here](https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json).  They are written in [JSON](http://www.json.org/) format, and are then interpreted programmatically.
