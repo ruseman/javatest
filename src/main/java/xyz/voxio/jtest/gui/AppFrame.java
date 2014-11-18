@@ -17,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import xyz.voxio.jtest.JTest;
 
-public class AppFrame extends JFrame
+public final class AppFrame extends JFrame
 {
 
 	/**

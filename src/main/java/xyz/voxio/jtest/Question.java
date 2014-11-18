@@ -2,7 +2,7 @@ package xyz.voxio.jtest;
 
 import java.util.List;
 
-public class Question
+public final class Question
 {
 	public List<String>	answers;
 	

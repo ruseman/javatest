@@ -1,6 +1,6 @@
 package xyz.voxio.jtest;
 
-public class Score
+public final class Score
 {
 
 }

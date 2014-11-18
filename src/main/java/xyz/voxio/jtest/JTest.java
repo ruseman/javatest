@@ -230,8 +230,6 @@ public final class JTest
 	
 	/**
 	 * Initializes the application, creating the necessary objects
-	 *
-	 * @return the instance
 	 */
 	public static void initialize()
 	{

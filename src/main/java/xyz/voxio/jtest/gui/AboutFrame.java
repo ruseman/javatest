@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class AboutFrame extends JFrame
+public final class AboutFrame extends JFrame
 {
 
 	/**

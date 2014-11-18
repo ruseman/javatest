@@ -2,7 +2,7 @@ package xyz.voxio.jtest;
 
 import java.util.List;
 
-public class Questions
+public final class Questions
 {
 	/**
 	 * The {@link List} of the Questions
