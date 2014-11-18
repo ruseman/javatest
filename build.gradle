@@ -34,7 +34,8 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 jar {
 	dependsOn configurations.runtime
 	from{
-		(configurations.runtime - configurations.provided).collect{
+		//(configurations.runtime - configurations.provided).collect{
+		configurations.compile.collect{
 			it.isDirectory()?it:zipTree(it)
 		}
 	}{

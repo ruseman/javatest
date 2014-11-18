@@ -33,10 +33,10 @@ import xyz.voxio.jtest.gui.AppFrame;
 
 public final class JTest
 {
-	
+
 	/**
 	 * Class representing a specific question, with a prompt, and 4 answers, the first of which is correct
-	 * 
+	 *
 	 * @author Tim Miller
 	 */
 	public static final class Question
@@ -45,16 +45,16 @@ public final class JTest
 		 * The set of answers, where index 0 is the correct answer, and index 1 through 3 are the incorrect answers
 		 */
 		public List<String>	answers;
-
+		
 		/**
 		 * The prompt for the question
 		 */
 		public String		prompt;
 	}
-
+	
 	/**
 	 * Class representing the set of questions used by the game. It is generated from a JSON file.
-	 * 
+	 *
 	 * @author Tim Miller
 	 */
 	public static final class Questions
@@ -63,63 +63,63 @@ public final class JTest
 		 * The {@link List} of the Questions
 		 */
 		public List<Question>	questions;
-
+		
 		/**
 		 * The version of the questions, as given in the JSON
 		 */
 		public int				version;
 	}
-
+	
 	/**
 	 * The web address for google, used to test the internet connectivity
 	 */
 	public static final String	GOOGLE					= "http://www.google.com";
-
+	
 	/**
 	 * The web address for the issue tracker
 	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
-
+	
 	/**
 	 * The {@link Logger} used by the application
 	 */
 	public static final Logger	logger					= Logger.getLogger(JTest.class.getCanonicalName());
-
+	
 	/**
 	 * The web address for the pull requests page
 	 */
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
-
+	
 	/**
 	 * The path to the local questions json file
 	 */
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
-
+	
 	/**
 	 * The web address for the remote questions json file
 	 */
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
-
+	
 	/**
 	 * The repository for the questions
 	 */
 	public static final String	QUESTIONS_REPO			= "https://github.com/Commador/JavaTestQuestions";
-
+	
 	/**
 	 * The project repo
 	 */
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
-
+	
 	/**
 	 * The temporary directory path, and I can't remember what I wanted to do
 	 */
 	public static final String	TEMP					= ".jtest_temp/";
-
+	
 	/**
 	 * The instance of the application
 	 */
 	private static JTest		instance;
-
+	
 	/**
 	 * Copies a remote web address to a local file path, although I suppose it could be used to copy a local to a local
 	 *
@@ -143,7 +143,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @return the instance of the application
 	 */
@@ -151,7 +151,7 @@ public final class JTest
 	{
 		return JTest.instance;
 	}
-
+	
 	/**
 	 * Pings google.com to determine whether or not the internet is reachable. If google is not reachable, then society has clearly collapsed, so this game really shouldn't be on your priority list.
 	 *
@@ -177,7 +177,7 @@ public final class JTest
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Launches the application
 	 */
@@ -186,7 +186,7 @@ public final class JTest
 		JTest.setInstance(new JTest());
 		JTest.instance().initialize().start();
 	}
-
+	
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -204,7 +204,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -222,7 +222,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -240,7 +240,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Parses a file to a readable string
 	 *
@@ -281,7 +281,7 @@ public final class JTest
 		}
 		return universe;
 	}
-	
+
 	/**
 	 * Parses a remote url to a string
 	 *
@@ -303,7 +303,7 @@ public final class JTest
 			{
 				buffer.append(chars, 0, read);
 			}
-
+			
 			return buffer.toString();
 		}
 		finally
@@ -314,7 +314,7 @@ public final class JTest
 			}
 		}
 	}
-
+	
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the contents untouched
 	 *
@@ -335,7 +335,7 @@ public final class JTest
 		}
 		return array;
 	}
-	
+
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the contents untouched
 	 *
@@ -357,7 +357,7 @@ public final class JTest
 		}
 		return array;
 	}
-
+	
 	/**
 	 * Sets the instance
 	 *
@@ -368,22 +368,22 @@ public final class JTest
 	{
 		JTest.instance = instance;
 	}
-	
+
 	/**
 	 * The "about" window
 	 */
 	private JFrame		aboutWindow;
-	
+
 	/**
 	 * The primary application window
 	 */
 	private JFrame		appWindow;
-
+	
 	/**
 	 * The local questions
 	 */
 	private Questions	localQuestions;
-
+	
 	/**
 	 * Cleanup the games objects
 	 */
@@ -391,7 +391,7 @@ public final class JTest
 	{
 		// There doesn't seem to be a whole lot that's actually necessary :/
 	}
-
+	
 	public void cloneQuestions()
 	{
 		try
@@ -407,7 +407,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @return the local questions
 	 */
@@ -422,7 +422,7 @@ public final class JTest
 		}
 		return this.localQuestions;
 	}
-
+	
 	/**
 	 * @return the local questions version
 	 */
@@ -432,7 +432,7 @@ public final class JTest
 		final Gson gson = new Gson();
 		return gson.fromJson(json, Questions.class).version;
 	}
-
+	
 	/**
 	 * @return the remote questions
 	 */
@@ -450,7 +450,7 @@ public final class JTest
 		}
 		return this.getRemoteQuestions();
 	}
-
+	
 	/**
 	 * Initializes the application, creating the necessary objects
 	 *
@@ -489,7 +489,7 @@ public final class JTest
 		});
 		return this;
 	}
-
+	
 	public Questions loadQuestions()
 	{
 		Questions questions = null;
@@ -538,9 +538,9 @@ public final class JTest
 		}
 		return questions;
 	}
-
+	
 	/**
-	 * @param loadQuestions
+	 * @param localQuestions
 	 */
 	public void setLocalQuestions(final Questions localQuestions)
 	{
@@ -558,7 +558,7 @@ public final class JTest
 		}
 		this.localQuestions = localQuestions;
 	}
-
+	
 	/**
 	 * Show the about window
 	 */
@@ -566,7 +566,7 @@ public final class JTest
 	{
 		this.aboutWindow.setVisible(true);
 	}
-	
+
 	/**
 	 * Shutdown the application nicely
 	 */
@@ -575,7 +575,7 @@ public final class JTest
 		this.cleanup();
 		System.exit(0);
 	}
-
+	
 	/**
 	 * Start the game
 	 */
