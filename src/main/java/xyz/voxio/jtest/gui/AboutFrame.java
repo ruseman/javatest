@@ -1,4 +1,4 @@
-package xyz.voxio.jtest;
+package xyz.voxio.jtest.gui;
 
 import java.awt.BorderLayout;
 
@@ -6,20 +6,20 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class AppFrame extends JFrame
+public class AboutFrame extends JFrame
 {
-	
+
 	/**
 	 *
 	 */
-	private static final long	serialVersionUID	= 4593115469915216836L;
-
+	private static final long	serialVersionUID	= -4208952844824385757L;
+	
 	private final JPanel		contentPane;
 
 	/**
 	 * Create the frame.
 	 */
-	public AppFrame()
+	public AboutFrame()
 	{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setBounds(100, 100, 450, 300);
@@ -28,5 +28,5 @@ public class AppFrame extends JFrame
 		this.contentPane.setLayout(new BorderLayout(0, 0));
 		this.setContentPane(this.contentPane);
 	}
-	
+
 }

@@ -8,13 +8,13 @@ public final class JSONHelper
 {
 	private JSONHelper()
 	{
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getMapFromJSON(String json)
+	public Map<String, Object> getMapFromJSON(final String json)
 	{
-		Gson gson = new Gson();
-		return (Map<String, Object>)gson.fromJson(json, Object.class);
+		final Gson gson = new Gson();
+		return (Map<String, Object>) gson.fromJson(json, Object.class);
 	}
 }
