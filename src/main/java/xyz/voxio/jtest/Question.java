@@ -12,9 +12,4 @@ public class Question
 	public String		prompt;
 
 	public int			value;
-
-	public double getValueInPoints()
-	{
-		return Double.parseDouble("" + this.value + ",000");
-	}
 }

@@ -88,9 +88,51 @@ public final class JTest
 	public static final String	TEMP					= ".jtest_temp/";
 	
 	/**
-	 * The instance of the application
+	 * The "about" window
 	 */
-	private static JTest		instance;
+	private static JFrame		aboutWindow;
+	
+	/**
+	 * The primary application window
+	 */
+	private static JFrame		appWindow;
+	
+	/**
+	 * The local questions
+	 */
+	private static Questions	localQuestions;
+	
+	private static Score		score;
+
+	/**
+	 * Cleanup the games objects
+	 */
+	public static void cleanup()
+	{
+		// There doesn't seem to be a whole lot that's actually necessary :/
+	}
+	
+	public static void cloneQuestions()
+	{
+		try
+		{
+			if (!(new File(JTest.QUESTIONS_JSON_LOCAL).exists()))
+			{
+				new File(JTest.QUESTIONS_JSON_LOCAL).createNewFile();
+			}
+			final URL remote = new URL(JTest.QUESTIONS_JSON_REMOTE);
+			final ReadableByteChannel rbc = Channels.newChannel(remote
+					.openStream());
+			final FileOutputStream fos = new FileOutputStream(
+					JTest.QUESTIONS_JSON_LOCAL);
+			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+			fos.close();
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Copies a remote web address to a local file path, although I suppose it
@@ -118,20 +160,112 @@ public final class JTest
 		}
 	}
 	
+	/**
+	 * @return the local questions
+	 */
+	public static Questions getLocalQuestions()
+	{
+		if (JTest.localQuestions == null)
+		{
+			final String json = JTest.parseFileToString(new File(
+					JTest.QUESTIONS_JSON_LOCAL));
+			final Gson gson = new Gson();
+			final Questions newQ = gson.fromJson(json, Questions.class);
+			JTest.localQuestions = newQ;
+		}
+		return JTest.localQuestions;
+	}
+
+	public static File getLocalQuestionsFile()
+	{
+		return new File(JTest.QUESTIONS_JSON_LOCAL);
+	}
+	
+	/**
+	 * @return the local questions version
+	 */
+	public static Integer getLocalVersion()
+	{
+		final String json = JTest.parseFileToString(new File(
+				JTest.QUESTIONS_JSON_LOCAL));
+		final Gson gson = new Gson();
+		return gson.fromJson(json, Questions.class).version;
+	}
+
+	/**
+	 * @return the remote questions
+	 */
+	public static Questions getRemoteQuestions()
+	{
+		try
+		{
+			final String json = JTest.parseURLtoString(new URL(
+					JTest.QUESTIONS_JSON_REMOTE));
+			final Gson gson = new Gson();
+			return gson.fromJson(json, Questions.class);
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+		return JTest.getRemoteQuestions();
+	}
+
+	public static Score getScore()
+	{
+		return JTest.score;
+	}
+	
+	public static String getScoreFormatted()
+	{
+		return "";
+		// TODO
+	}
+	
 	public static void infoBox(final String infoMessage, final String titleBar)
 	{
 		JOptionPane.showMessageDialog(null, infoMessage,
 				"InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
 	}
-
-	/**
-	 * @return the instance of the application
-	 */
-	public static JTest instance()
-	{
-		return JTest.instance;
-	}
 	
+	/**
+	 * Initializes the application, creating the necessary objects
+	 *
+	 * @return the instance
+	 */
+	public static void initialize()
+	{
+		final File tempDir = new File(JTest.TEMP);
+		tempDir.mkdir();
+		tempDir.deleteOnExit();
+		JTest.setLocalQuestions(JTest.loadQuestions());
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				JTest.cleanup();
+			}
+		});
+		EventQueue.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					JTest.appWindow = new AppFrame();
+					JTest.aboutWindow = new AboutFrame();
+					JTest.appWindow.setVisible(true);
+				}
+				catch (final Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
 	/**
 	 * Pings google.com to determine whether or not the internet is reachable.
 	 * If google is not reachable, then society has clearly collapsed, so this
@@ -162,12 +296,54 @@ public final class JTest
 	}
 	
 	/**
+	 * Determines whether or not the questions need to be updated, updates them,
+	 * and then loads them as an instance of {@link Questions}
+	 *
+	 * @return the Questions
+	 */
+	public static Questions loadQuestions()
+	{
+		final boolean connection = JTest.isInternetReachable();
+		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL)
+		.exists();
+		if (!connection && !isLocalPresent)
+		{
+			JTest.infoBox(
+					"There are no local questions stored, and there is no internet connection.\nThe application must now close.",
+					"Error");
+			JTest.shutdown();
+			return null;
+		}
+		else if (!connection && isLocalPresent)
+		{
+			return JTest.getLocalQuestions();
+		}
+		else if (connection && !isLocalPresent)
+		{
+			JTest.cloneQuestions();
+			return JTest.getLocalQuestions();
+		}
+		else
+		{
+			if (JTest.shouldUpdateQuestions())
+			{
+				JTest.cloneQuestions();
+				return JTest.getLocalQuestions();
+			}
+			else
+			{
+				return JTest.getLocalQuestions();
+			}
+		}
+	}
+	
+	/**
 	 * Launches the application
 	 */
 	public static void main(final String[] args)
 	{
-		JTest.setInstance(new JTest());
-		JTest.instance().initialize().start();
+		JTest.initialize();
+		JTest.start();
 	}
 
 	/**
@@ -205,7 +381,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -223,7 +399,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Parses a file to a readable string
 	 *
@@ -297,7 +473,7 @@ public final class JTest
 			}
 		}
 	}
-	
+
 	public static void restartApplication()
 	{
 		try
@@ -307,7 +483,7 @@ public final class JTest
 				@Override
 				public void run()
 				{
-					JTest.instance().cleanup();
+					JTest.cleanup();
 				}
 			});
 		}
@@ -317,7 +493,7 @@ public final class JTest
 			JTest.infoBox(e.getMessage(), "");
 		}
 	}
-
+	
 	/**
 	 * Restart the current Java application
 	 *
@@ -387,7 +563,34 @@ public final class JTest
 					"Error while trying to restart the application", e);
 		}
 	}
+	
+	/**
+	 * @param localQuestions
+	 */
+	public static void setLocalQuestions(final Questions localQuestions)
+	{
+		if (localQuestions == null) { return; }
+		JTest.localQuestions = localQuestions;
+	}
 
+	public static void setScore(final Score score)
+	{
+		JTest.score = score;
+	}
+	
+	public static boolean shouldUpdateQuestions()
+	{
+		return JTest.getRemoteQuestions().version > JTest.getLocalQuestions().version;
+	}
+	
+	/**
+	 * Show the about window
+	 */
+	public static void showAboutWindow()
+	{
+		JTest.aboutWindow.setVisible(true);
+	}
+	
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the
 	 * contents untouched
@@ -432,236 +635,26 @@ public final class JTest
 		}
 		return array;
 	}
-	
-	/**
-	 * Sets the instance
-	 *
-	 * @param instance
-	 *            the instance
-	 */
-	private static void setInstance(final JTest instance)
-	{
-		JTest.instance = instance;
-	}
-	
-	/**
-	 * The "about" window
-	 */
-	private JFrame		aboutWindow;
-	
-	/**
-	 * The primary application window
-	 */
-	private JFrame		appWindow;
 
-	/**
-	 * The local questions
-	 */
-	private Questions	localQuestions;
-	
-	/**
-	 * Cleanup the games objects
-	 */
-	public void cleanup()
-	{
-		// There doesn't seem to be a whole lot that's actually necessary :/
-	}
-	
-	public void cloneQuestions()
-	{
-		try
-		{
-			if (!(new File(JTest.QUESTIONS_JSON_LOCAL).exists()))
-			{
-				new File(JTest.QUESTIONS_JSON_LOCAL).createNewFile();
-			}
-			final URL remote = new URL(JTest.QUESTIONS_JSON_REMOTE);
-			final ReadableByteChannel rbc = Channels.newChannel(remote
-					.openStream());
-			final FileOutputStream fos = new FileOutputStream(
-					JTest.QUESTIONS_JSON_LOCAL);
-			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-			fos.close();
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * @return the local questions
-	 */
-	public Questions getLocalQuestions()
-	{
-		if (this.localQuestions == null)
-		{
-			final String json = JTest.parseFileToString(new File(
-					JTest.QUESTIONS_JSON_LOCAL));
-			final Gson gson = new Gson();
-			final Questions newQ = gson.fromJson(json, Questions.class);
-			this.localQuestions = newQ;
-		}
-		return this.localQuestions;
-	}
-	
-	public File getLocalQuestionsFile()
-	{
-		return new File(JTest.QUESTIONS_JSON_LOCAL);
-	}
-	
-	/**
-	 * @return the local questions version
-	 */
-	public Integer getLocalVersion()
-	{
-		final String json = JTest.parseFileToString(new File(
-				JTest.QUESTIONS_JSON_LOCAL));
-		final Gson gson = new Gson();
-		return gson.fromJson(json, Questions.class).version;
-	}
-
-	/**
-	 * @return the remote questions
-	 */
-	public Questions getRemoteQuestions()
-	{
-		try
-		{
-			final String json = JTest.parseURLtoString(new URL(
-					JTest.QUESTIONS_JSON_REMOTE));
-			final Gson gson = new Gson();
-			return gson.fromJson(json, Questions.class);
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
-		return this.getRemoteQuestions();
-	}
-
-	/**
-	 * Initializes the application, creating the necessary objects
-	 *
-	 * @return the instance
-	 */
-	public JTest initialize()
-	{
-		final File tempDir = new File(JTest.TEMP);
-		tempDir.mkdir();
-		tempDir.deleteOnExit();
-		this.setLocalQuestions(this.loadQuestions());
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				JTest.this.cleanup();
-			}
-		});
-		EventQueue.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					JTest.this.appWindow = new AppFrame();
-					JTest.this.aboutWindow = new AboutFrame();
-					JTest.this.appWindow.setVisible(true);
-				}
-				catch (final Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-		return this;
-	}
-	
-	/**
-	 * Determines whether or not the questions need to be updated, updates them,
-	 * and then loads them as an instance of {@link Questions}
-	 *
-	 * @return the Questions
-	 */
-	public Questions loadQuestions()
-	{
-		final boolean connection = JTest.isInternetReachable();
-		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL)
-		.exists();
-		if (!connection && !isLocalPresent)
-		{
-			JTest.infoBox(
-					"There are no local questions stored, and there is no internet connection.\nThe application must now close.",
-					"Error");
-			this.shutdown();
-			return null;
-		}
-		else if (!connection && isLocalPresent)
-		{
-			return this.getLocalQuestions();
-		}
-		else if (connection && !isLocalPresent)
-		{
-			this.cloneQuestions();
-			return this.getLocalQuestions();
-		}
-		else
-		{
-			if (this.shouldUpdateQuestions())
-			{
-				this.cloneQuestions();
-				return this.getLocalQuestions();
-			}
-			else
-			{
-				return this.getLocalQuestions();
-			}
-		}
-	}
-	
-	public void relaunch()
-	{
-
-	}
-	
-	/**
-	 * @param localQuestions
-	 */
-	public void setLocalQuestions(final Questions localQuestions)
-	{
-		if (localQuestions == null) { return; }
-		this.localQuestions = localQuestions;
-	}
-	
-	public boolean shouldUpdateQuestions()
-	{
-		return this.getRemoteQuestions().version > this.getLocalQuestions().version;
-	}
-
-	/**
-	 * Show the about window
-	 */
-	public void showAboutWindow()
-	{
-		this.aboutWindow.setVisible(true);
-	}
-	
 	/**
 	 * Shutdown the application nicely
 	 */
-	public void shutdown()
+	public static void shutdown()
 	{
-		this.cleanup();
+		JTest.cleanup();
 		System.exit(0);
 	}
-
+	
 	/**
 	 * Start the game
 	 */
-	public void start()
+	public static void start()
 	{
 		// I'm really not sure what I'm going to do here
+	}
+	
+	private JTest()
+	{
+
 	}
 }

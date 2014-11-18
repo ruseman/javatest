@@ -72,7 +72,7 @@ public class AppFrame extends JFrame
 			@Override
 			public void mousePressed(final MouseEvent e)
 			{
-				JTest.instance().shutdown();
+				JTest.shutdown();
 			}
 		});
 		mnFile.add(mntmExit);
@@ -122,7 +122,7 @@ public class AppFrame extends JFrame
 			@Override
 			public void mousePressed(final MouseEvent e)
 			{
-				JTest.instance().showAboutWindow();
+				JTest.showAboutWindow();
 			}
 		});
 		mnMeta.add(mntmAbout);
