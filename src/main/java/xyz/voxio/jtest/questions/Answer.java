@@ -2,11 +2,26 @@ package xyz.voxio.jtest.questions;
 
 public class Answer
 {
-	private String string;
-	
-	public Answer(String string)
+	private final String	string;
+
+	public Answer(final String string)
 	{
 		this.string = string;
+	}
+
+	@Override
+	public boolean equals(final Object obj)
+	{
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (!(obj instanceof Answer)) { return false; }
+		final Answer other = (Answer) obj;
+		if (this.string == null)
+		{
+			if (other.string != null) { return false; }
+		}
+		else if (!this.string.equals(other.string)) { return false; }
+		return true;
 	}
 	
 	@Override
@@ -14,27 +29,13 @@ public class Answer
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((string == null) ? 0 : string.hashCode());
+		result = (prime * result) + ((this.string == null) ? 0 : this.string.hashCode());
 		return result;
 	}
-
+	
 	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj) { return true; }
-		if (obj == null) { return false; }
-		if (!(obj instanceof Answer)) { return false; }
-		Answer other = (Answer) obj;
-		if (string == null)
-		{
-			if (other.string != null) { return false; }
-		}
-		else if (!string.equals(other.string)) { return false; }
-		return true;
-	}
-
 	public String toString()
 	{
-		return string;
+		return this.string;
 	}
 }

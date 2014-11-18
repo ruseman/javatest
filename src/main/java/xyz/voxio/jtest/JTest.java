@@ -4,6 +4,9 @@ import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -12,6 +15,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -24,34 +29,35 @@ import com.google.gson.Gson;
 
 import xyz.voxio.jtest.gui.AboutFrame;
 import xyz.voxio.jtest.gui.AppFrame;
-import xyz.voxio.jtest.gui.ErrorFrame;
 import xyz.voxio.jtest.questions.Questions;
 
 public class JTest
 {
 	public static final String	GOOGLE					= "http://www.google.com";
-
+	
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
-
+	
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
-
+	
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
-
+	
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
-
+	
 	public static final String	QUESTIONS_REPO			= "https://github.com/Commador/JavaTestQuestions";
-
+	
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
-
+	
+	public static final String	TEMP					= ".jtest_temp/";
+	
 	private static JTest		instance;
-
+	
 	public static int[] copyArray(final int[] array)
 	{
 		final int[] newArray = new int[array.length];
 		System.arraycopy(array, 0, newArray, 0, array.length);
 		return newArray;
 	}
-
+	
 	public static void copyRemoteToLocal(final URI local, final URI remote)
 	{
 		try
@@ -67,7 +73,14 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> getMapFromJSON(final String json)
+	{
+		final Gson gson = new Gson();
+		return (Map<String, Object>) gson.fromJson(json, Object.class);
+	}
+	
 	public static JTest instance()
 	{
 		return JTest.instance;
@@ -93,13 +106,13 @@ public class JTest
 		}
 		return true;
 	}
-	
+
 	public static void main(final String[] args)
 	{
 		JTest.setInstance(new JTest());
 		JTest.instance().initialize().start();
 	}
-	
+
 	public static void openWebpage(final String url)
 	{
 		try
@@ -123,7 +136,7 @@ public class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void openWebpage(final URL url)
 	{
 		try
@@ -150,7 +163,7 @@ public class JTest
 			{
 				buffer.append(chars, 0, read);
 			}
-
+			
 			return buffer.toString();
 		}
 		finally
@@ -160,6 +173,40 @@ public class JTest
 				reader.close();
 			}
 		}
+	}
+	
+	public static String readStringFromFile(final File file)
+	{
+		String universe = "";
+		try
+		{
+			final BufferedReader br = new BufferedReader(new FileReader(file));
+			try
+			{
+				final StringBuilder sb = new StringBuilder();
+				String line = br.readLine();
+				while (line != null)
+				{
+					sb.append(line);
+					sb.append(System.lineSeparator());
+					line = br.readLine();
+				}
+				universe = sb.toString();
+			}
+			finally
+			{
+				br.close();
+			}
+		}
+		catch (final FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (final IOException e)
+		{
+			e.printStackTrace();
+		}
+		return universe;
 	}
 	
 	public static String readURIToString(final URI uri)
@@ -201,7 +248,7 @@ public class JTest
 		}
 		return array;
 	}
-	
+
 	public static String[] shuffleArray(final String[] array)
 	{
 		int index;
@@ -221,12 +268,10 @@ public class JTest
 	{
 		JTest.instance = instance;
 	}
-	
-	private JFrame		aboutWindow;
 
-	private JFrame		appWindow;
+	private JFrame		aboutWindow;
 	
-	private JFrame		errorWindow;
+	private JFrame		appWindow;
 
 	private Questions	questions;
 
@@ -235,28 +280,16 @@ public class JTest
 
 	}
 	
-	/**
-	 * @return the errorWindow
-	 */
-	public JFrame getErrorWindow()
-	{
-		return this.errorWindow;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Map<String, Object> getMapFromJSON(final String json)
-	{
-		final Gson gson = new Gson();
-		return (Map<String, Object>) gson.fromJson(json, Object.class);
-	}
-	
 	public Questions getQuestions()
 	{
 		return this.questions;
 	}
-
+	
 	public JTest initialize()
 	{
+		final File tempDir = new File(JTest.TEMP);
+		tempDir.mkdir();
+		tempDir.deleteOnExit();
 		this.setQuestions(this.loadQuestions());
 		EventQueue.invokeLater(new Runnable()
 		{
@@ -278,12 +311,12 @@ public class JTest
 		});
 		return this;
 	}
-
+	
 	public void showAboutWindow()
 	{
 		this.aboutWindow.setVisible(true);
 	}
-
+	
 	public void shutdown()
 	{
 		this.cleanup();
@@ -292,14 +325,25 @@ public class JTest
 
 	public void start()
 	{
-
-	}
-	
-	private void cloneQuestions()
-	{
 		
 	}
 
+	private void cloneQuestions()
+	{
+		try
+		{
+			final URL remote = new URL(JTest.QUESTIONS_JSON_REMOTE);
+			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
+			final FileOutputStream fos = new FileOutputStream(JTest.QUESTIONS_JSON_LOCAL);
+			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+			fos.close();
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	private Questions loadQuestions()
 	{
 		Questions questions = null;
@@ -320,8 +364,9 @@ public class JTest
 		{
 			try
 			{
-				// TODO load local questions file
-				// TODO determine whether or not the local questions are the latest
+				final Map<String, Object> qMap = JTest.getMapFromJSON(JTest.readStringFromFile(localQuestions));
+				final Object version = qMap.get("version");
+				System.out.println(version.toString());
 			}
 			catch (final Exception e)
 			{
@@ -332,7 +377,7 @@ public class JTest
 		}
 		return questions;
 	}
-
+	
 	private void setQuestions(final Questions questions)
 	{
 		this.questions = questions;
