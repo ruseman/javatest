@@ -4,7 +4,7 @@ Final project for CSC 111
  
 Questions
 -
-The questions are hosted [here](https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json)
+The questions are hosted [here](https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json).  They are written in [JSON](http://www.json.org/) format, and are then interpreted programmatically.
 
 Dependencies
 -
@@ -14,5 +14,5 @@ Credits
 -
 * Tim Miller - Primary developer
 * Google - Development of the Guava and GSON libraries
-* Gradleware - Development of Gradle
+* Gradleware - Development of Gradle, which has made dependency management and build distribution so much easier
 * [StackOverflow](http://stackoverflow.com/) - A fantastic community that I've relied on for years
