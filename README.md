@@ -4,7 +4,7 @@ This application is my final project for CSC 111.  The goal was to write a GUI a
 
 Questions
 -
-The questions are hosted [here](https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json).  They are written in [JSON](http://www.json.org/) format, and are then interpreted programmatically.
+The questions are hosted on Github [here](https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json).  They are written in [JSON](http://www.json.org/) format, and are then interpreted programmatically.
 
 Dependencies
 -
