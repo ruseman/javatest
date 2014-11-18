@@ -21,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -32,49 +31,103 @@ import com.google.gson.Gson;
 import xyz.voxio.jtest.gui.AboutFrame;
 import xyz.voxio.jtest.gui.AppFrame;
 
-public class JTest
+public final class JTest
 {
-	public static class Question
+	
+	/**
+	 * Class representing a specific question, with a prompt, and 4 answers, the first of which is correct
+	 * 
+	 * @author Tim Miller
+	 */
+	public static final class Question
 	{
+		/**
+		 * The set of answers, where index 0 is the correct answer, and index 1 through 3 are the incorrect answers
+		 */
 		public List<String>	answers;
 
+		/**
+		 * The prompt for the question
+		 */
 		public String		prompt;
 	}
 
-	public static class Questions
+	/**
+	 * Class representing the set of questions used by the game. It is generated from a JSON file.
+	 * 
+	 * @author Tim Miller
+	 */
+	public static final class Questions
 	{
+		/**
+		 * The {@link List} of the Questions
+		 */
 		public List<Question>	questions;
 
+		/**
+		 * The version of the questions, as given in the JSON
+		 */
 		public int				version;
 	}
 
+	/**
+	 * The web address for google, used to test the internet connectivity
+	 */
 	public static final String	GOOGLE					= "http://www.google.com";
 
+	/**
+	 * The web address for the issue tracker
+	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
 
+	/**
+	 * The {@link Logger} used by the application
+	 */
 	public static final Logger	logger					= Logger.getLogger(JTest.class.getCanonicalName());
 
+	/**
+	 * The web address for the pull requests page
+	 */
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
 
+	/**
+	 * The path to the local questions json file
+	 */
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
 
+	/**
+	 * The web address for the remote questions json file
+	 */
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
 
+	/**
+	 * The repository for the questions
+	 */
 	public static final String	QUESTIONS_REPO			= "https://github.com/Commador/JavaTestQuestions";
 
+	/**
+	 * The project repo
+	 */
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
 
+	/**
+	 * The temporary directory path, and I can't remember what I wanted to do
+	 */
 	public static final String	TEMP					= ".jtest_temp/";
 
+	/**
+	 * The instance of the application
+	 */
 	private static JTest		instance;
 
-	public static int[] copyArray(final int[] array)
-	{
-		final int[] newArray = new int[array.length];
-		System.arraycopy(array, 0, newArray, 0, array.length);
-		return newArray;
-	}
-	
+	/**
+	 * Copies a remote web address to a local file path, although I suppose it could be used to copy a local to a local
+	 *
+	 * @param local
+	 *            the local address
+	 * @param remote
+	 *            the remote address
+	 */
 	public static void copyRemoteToLocal(final URI local, final URI remote)
 	{
 		try
@@ -91,11 +144,19 @@ public class JTest
 		}
 	}
 	
+	/**
+	 * @return the instance of the application
+	 */
 	public static JTest instance()
 	{
 		return JTest.instance;
 	}
 
+	/**
+	 * Pings google.com to determine whether or not the internet is reachable. If google is not reachable, then society has clearly collapsed, so this game really shouldn't be on your priority list.
+	 *
+	 * @return whether or not the internet is coming out
+	 */
 	public static boolean isInternetReachable()
 	{
 		try
@@ -117,17 +178,26 @@ public class JTest
 		return true;
 	}
 	
+	/**
+	 * Launches the application
+	 */
 	public static void main(final String[] args)
 	{
 		JTest.setInstance(new JTest());
 		JTest.instance().initialize().start();
 	}
 
-	public static void openWebpage(final String url)
+	/**
+	 * Opens a web page in the default browser
+	 *
+	 * @param webAddress
+	 *            the web address in question
+	 */
+	public static void openWebpage(final String webAddress)
 	{
 		try
 		{
-			JTest.openWebpage(new URI(url));
+			JTest.openWebpage(new URI(webAddress));
 		}
 		catch (final URISyntaxException e)
 		{
@@ -135,6 +205,12 @@ public class JTest
 		}
 	}
 
+	/**
+	 * Opens a web page in the default browser
+	 *
+	 * @param uri
+	 *            the uri in question
+	 */
 	public static void openWebpage(final URI uri)
 	{
 		try
@@ -147,6 +223,12 @@ public class JTest
 		}
 	}
 	
+	/**
+	 * Opens a web page in the default browser
+	 *
+	 * @param url
+	 *            the url in question
+	 */
 	public static void openWebpage(final URL url)
 	{
 		try
@@ -159,6 +241,13 @@ public class JTest
 		}
 	}
 
+	/**
+	 * Parses a file to a readable string
+	 *
+	 * @param file
+	 *            the file
+	 * @return the string
+	 */
 	public static String parseFileToString(final File file)
 	{
 		String universe = "";
@@ -193,13 +282,14 @@ public class JTest
 		return universe;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static Map<String, Object> parseMapFromJSON(final String json)
-	{
-		final Gson gson = new Gson();
-		return (Map<String, Object>) gson.fromJson(json, Object.class);
-	}
-	
+	/**
+	 * Parses a remote url to a string
+	 *
+	 * @param url
+	 *            the url
+	 * @return the string
+	 * @throws Exception
+	 */
 	public static String parseURLtoString(final URL url) throws Exception
 	{
 		BufferedReader reader = null;
@@ -225,6 +315,13 @@ public class JTest
 		}
 	}
 
+	/**
+	 * Shuffles an array, changing the order of the array, but leaving the contents untouched
+	 *
+	 * @param array
+	 *            the array
+	 * @return the new array
+	 */
 	public static int[] shuffleArray(final int[] array)
 	{
 		int index, temp;
@@ -239,6 +336,13 @@ public class JTest
 		return array;
 	}
 	
+	/**
+	 * Shuffles an array, changing the order of the array, but leaving the contents untouched
+	 *
+	 * @param array
+	 *            the array
+	 * @return the new array
+	 */
 	public static String[] shuffleArray(final String[] array)
 	{
 		int index;
@@ -254,24 +358,59 @@ public class JTest
 		return array;
 	}
 
+	/**
+	 * Sets the instance
+	 *
+	 * @param instance
+	 *            the instance
+	 */
 	private static void setInstance(final JTest instance)
 	{
 		JTest.instance = instance;
 	}
 	
+	/**
+	 * The "about" window
+	 */
 	private JFrame		aboutWindow;
 	
+	/**
+	 * The primary application window
+	 */
 	private JFrame		appWindow;
 
+	/**
+	 * The local questions
+	 */
 	private Questions	localQuestions;
 
-	private Questions	questions;
-
+	/**
+	 * Cleanup the games objects
+	 */
 	public void cleanup()
 	{
-		
+		// There doesn't seem to be a whole lot that's actually necessary :/
 	}
 
+	public void cloneQuestions()
+	{
+		try
+		{
+			final URL remote = new URL(JTest.QUESTIONS_JSON_REMOTE);
+			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
+			final FileOutputStream fos = new FileOutputStream(JTest.QUESTIONS_JSON_LOCAL);
+			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+			fos.close();
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @return the local questions
+	 */
 	public Questions getLocalQuestions()
 	{
 		if (this.localQuestions == null)
@@ -283,19 +422,20 @@ public class JTest
 		}
 		return this.localQuestions;
 	}
-	
+
+	/**
+	 * @return the local questions version
+	 */
 	public Integer getLocalVersion()
 	{
 		final String json = JTest.parseFileToString(new File(JTest.QUESTIONS_JSON_LOCAL));
 		final Gson gson = new Gson();
 		return gson.fromJson(json, Questions.class).version;
 	}
-	
-	public Questions getQuestions()
-	{
-		return this.questions;
-	}
 
+	/**
+	 * @return the remote questions
+	 */
 	public Questions getRemoteQuestions()
 	{
 		try
@@ -308,15 +448,28 @@ public class JTest
 		{
 			e.printStackTrace();
 		}
-		return null;
+		return this.getRemoteQuestions();
 	}
 
+	/**
+	 * Initializes the application, creating the necessary objects
+	 *
+	 * @return the instance
+	 */
 	public JTest initialize()
 	{
 		final File tempDir = new File(JTest.TEMP);
 		tempDir.mkdir();
 		tempDir.deleteOnExit();
-		this.setQuestions(this.loadQuestions());
+		this.setLocalQuestions(this.loadQuestions());
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				JTest.this.cleanup();
+			}
+		});
 		EventQueue.invokeLater(new Runnable()
 		{
 			@Override
@@ -337,39 +490,7 @@ public class JTest
 		return this;
 	}
 
-	public void showAboutWindow()
-	{
-		this.aboutWindow.setVisible(true);
-	}
-
-	public void shutdown()
-	{
-		this.cleanup();
-		System.exit(0);
-	}
-
-	public void start()
-	{
-
-	}
-	
-	private void cloneQuestions()
-	{
-		try
-		{
-			final URL remote = new URL(JTest.QUESTIONS_JSON_REMOTE);
-			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
-			final FileOutputStream fos = new FileOutputStream(JTest.QUESTIONS_JSON_LOCAL);
-			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-			fos.close();
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	private Questions loadQuestions()
+	public Questions loadQuestions()
 	{
 		Questions questions = null;
 		final File localQuestions = new File(JTest.QUESTIONS_JSON_LOCAL);
@@ -398,6 +519,10 @@ public class JTest
 					this.cloneQuestions();
 					return this.loadQuestions();
 				}
+				else
+				{
+					return this.getLocalQuestions();
+				}
 			}
 			catch (final NullPointerException e)
 			{
@@ -414,8 +539,48 @@ public class JTest
 		return questions;
 	}
 
-	private void setQuestions(final Questions questions)
+	/**
+	 * @param loadQuestions
+	 */
+	public void setLocalQuestions(final Questions localQuestions)
 	{
-		this.questions = questions;
+		if (localQuestions == null)
+		{
+			return;
+		}
+		else if (this.localQuestions != null)
+		{
+			// I considered having the game do nothing if a localQuestions already existed, but then I decided, what the hell!
+		}
+		else if (this.localQuestions == null)
+		{
+			this.localQuestions = localQuestions;
+		}
+		this.localQuestions = localQuestions;
+	}
+
+	/**
+	 * Show the about window
+	 */
+	public void showAboutWindow()
+	{
+		this.aboutWindow.setVisible(true);
+	}
+	
+	/**
+	 * Shutdown the application nicely
+	 */
+	public void shutdown()
+	{
+		this.cleanup();
+		System.exit(0);
+	}
+
+	/**
+	 * Start the game
+	 */
+	public void start()
+	{
+		// I'm really not sure what I'm going to do here
 	}
 }
