@@ -8,9 +8,9 @@ public final class JSONHelper
 {
 	private JSONHelper()
 	{
-
+		
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getMapFromJSON(final String json)
 	{

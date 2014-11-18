@@ -1,13 +1,13 @@
 package xyz.voxio.jtest.questions;
 
-public final class Questions
+public class Questions
 {
+	public Question[]	questions;
+	
+	public String		version;
 
 	public Questions()
 	{
 		
 	}
-	
-	public String version;
-	public Question[] questions;
 }

@@ -1,17 +1,25 @@
 package xyz.voxio.jtest.questions;
 
+import xyz.voxio.jtest.JTest;
+
 public class Question
 {
+	String[]	answers;
+	
+	String		prompt;
+
 	public Question()
 	{
 		
 	}
 	
-	String prompt;
-	String[] answers;
-	
+	public String[] getAnswersInRandomOrder()
+	{
+		return JTest.shuffleArray(this.answers);
+	}
+
 	public String getCorrectAnswer()
 	{
-		return answers[0];
+		return this.answers[0];
 	}
 }
