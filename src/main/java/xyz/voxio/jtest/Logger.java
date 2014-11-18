@@ -59,15 +59,13 @@ public final class Logger extends java.util.logging.Logger
 	}
 	
 	@Override
-	public void entering(final String sourceClass, final String sourceMethod,
-			final Object param1)
+	public void entering(final String sourceClass, final String sourceMethod, final Object param1)
 	{
 		super.entering(sourceClass, sourceMethod, param1);
 	}
 	
 	@Override
-	public void entering(final String sourceClass, final String sourceMethod,
-			final Object[] params)
+	public void entering(final String sourceClass, final String sourceMethod, final Object[] params)
 	{
 		super.entering(sourceClass, sourceMethod, params);
 	}
@@ -79,8 +77,7 @@ public final class Logger extends java.util.logging.Logger
 	}
 	
 	@Override
-	public void exiting(final String sourceClass, final String sourceMethod,
-			final Object result)
+	public void exiting(final String sourceClass, final String sourceMethod, final Object result)
 	{
 		super.exiting(sourceClass, sourceMethod, result);
 	}
@@ -194,29 +191,25 @@ public final class Logger extends java.util.logging.Logger
 	}
 	
 	@Override
-	public void logp(final Level level, final String sourceClass,
-			final String sourceMethod, final String msg)
+	public void logp(final Level level, final String sourceClass, final String sourceMethod, final String msg)
 	{
 		super.logp(level, sourceClass, sourceMethod, msg);
 	}
 	
 	@Override
-	public void logp(final Level level, final String sourceClass,
-			final String sourceMethod, final String msg, final Object param1)
+	public void logp(final Level level, final String sourceClass, final String sourceMethod, final String msg, final Object param1)
 	{
 		super.logp(level, sourceClass, sourceMethod, msg, param1);
 	}
 	
 	@Override
-	public void logp(final Level level, final String sourceClass,
-			final String sourceMethod, final String msg, final Object[] params)
+	public void logp(final Level level, final String sourceClass, final String sourceMethod, final String msg, final Object[] params)
 	{
 		super.logp(level, sourceClass, sourceMethod, msg, params);
 	}
 	
 	@Override
-	public void logp(final Level level, final String sourceClass,
-			final String sourceMethod, final String msg, final Throwable thrown)
+	public void logp(final Level level, final String sourceClass, final String sourceMethod, final String msg, final Throwable thrown)
 	{
 		super.logp(level, sourceClass, sourceMethod, msg, thrown);
 	}
@@ -258,8 +251,7 @@ public final class Logger extends java.util.logging.Logger
 	}
 	
 	@Override
-	public void throwing(final String sourceClass, final String sourceMethod,
-			final Throwable thrown)
+	public void throwing(final String sourceClass, final String sourceMethod, final Throwable thrown)
 	{
 		super.throwing(sourceClass, sourceMethod, thrown);
 	}

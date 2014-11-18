@@ -15,12 +15,16 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.google.gson.Gson;
+
 import xyz.voxio.jtest.gui.AboutFrame;
 import xyz.voxio.jtest.gui.AppFrame;
+import xyz.voxio.jtest.gui.ErrorFrame;
 import xyz.voxio.jtest.questions.Questions;
 
 public class JTest
@@ -52,8 +56,7 @@ public class JTest
 	{
 		try
 		{
-			Files.copy(remote.toURL().openStream(), Paths.get(local),
-					StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(remote.toURL().openStream(), Paths.get(local), StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (final MalformedURLException e)
 		{
@@ -75,8 +78,7 @@ public class JTest
 		try
 		{
 			final URL url = new URL(JTest.GOOGLE);
-			final HttpURLConnection urlConnect = (HttpURLConnection) url
-					.openConnection();
+			final HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
 			urlConnect.getContent();
 		}
 		catch (final UnknownHostException e)
@@ -134,8 +136,7 @@ public class JTest
 		}
 	}
 
-	public static String readRemoteToString(final String urlString)
-			throws Exception
+	public static String readRemoteToString(final String urlString) throws Exception
 	{
 		BufferedReader reader = null;
 		try
@@ -225,18 +226,35 @@ public class JTest
 
 	private JFrame		appWindow;
 	
+	private JFrame		errorWindow;
+
 	private Questions	questions;
 
 	public void cleanup()
 	{
 
 	}
-
+	
+	/**
+	 * @return the errorWindow
+	 */
+	public JFrame getErrorWindow()
+	{
+		return this.errorWindow;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getMapFromJSON(final String json)
+	{
+		final Gson gson = new Gson();
+		return (Map<String, Object>) gson.fromJson(json, Object.class);
+	}
+	
 	public Questions getQuestions()
 	{
 		return this.questions;
 	}
-	
+
 	public JTest initialize()
 	{
 		this.setQuestions(this.loadQuestions());
@@ -249,6 +267,7 @@ public class JTest
 				{
 					JTest.this.appWindow = new AppFrame();
 					JTest.this.aboutWindow = new AboutFrame();
+					JTest.this.errorWindow = new ErrorFrame();
 					JTest.this.appWindow.setVisible(true);
 				}
 				catch (final Exception e)
@@ -259,7 +278,7 @@ public class JTest
 		});
 		return this;
 	}
-	
+
 	public void showAboutWindow()
 	{
 		this.aboutWindow.setVisible(true);
@@ -275,7 +294,7 @@ public class JTest
 	{
 
 	}
-
+	
 	private void cloneQuestions()
 	{
 		
@@ -285,18 +304,24 @@ public class JTest
 	{
 		Questions questions = null;
 		final File localQuestions = new File("questions.json");
-		if (!localQuestions.exists())
+		if ((!localQuestions.exists()))
 		{
-			this.cloneQuestions();
-			return this.loadQuestions();
+			if (!JTest.isInternetReachable())
+			{
+				this.shutdown();
+			}
+			else
+			{
+				this.cloneQuestions();
+				return this.loadQuestions();
+			}
 		}
 		else
 		{
 			try
 			{
 				// TODO load local questions file
-				// TODO determine whether or not the local questions are the
-// latest
+				// TODO determine whether or not the local questions are the latest
 			}
 			catch (final Exception e)
 			{

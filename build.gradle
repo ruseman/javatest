@@ -7,12 +7,18 @@ repositories {
 
 group = "xyz.voxio"
 archivesBaseName = 'javatest'
+version = '0.1.0'
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
+configurations{
+	provided
+    compile.extendsFrom provided
+}
+
 dependencies {
-  compile group: 'com.google.guava', name: 'guava', version: '12.0'
-  compile 'com.google.code.gson:gson:2.3'
+	compile group: 'com.google.guava', name: 'guava', version: '12.0'
+	compile 'com.google.code.gson:gson:2.3'
 }
 
 task sourceJar(type: Jar) {
@@ -26,7 +32,16 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 jar {
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	dependsOn configurations.runtime
+	from{
+		(configurations.runtime - configurations.provided).collect{
+			it.isDirectory()?it:zipTree(it)
+		}
+	}{
+		exclude "META-INF/*.SF"
+		exclude "META-INF/*.DSA"
+		exclude "MEFA-INF/*.RSA"
+	}
 }
 
 artifacts{
