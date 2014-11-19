@@ -39,70 +39,70 @@ public final class JTest
 	 * The web address for github, used to test the internet connectivity
 	 */
 	public static final String	GITHUB					= "https://github.com/";
-	
+
 	/**
 	 * The web address for the issue tracker
 	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
-	
+
 	/**
 	 * The {@link Logger} used by the application
 	 */
 	public static final Logger	logger					= Logger.getLogger(JTest.class
-			.getCanonicalName());
-	
+																.getCanonicalName());
+
 	/**
 	 * The web address for the pull requests page
 	 */
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
-	
+
 	/**
 	 * The path to the local questions json file
 	 */
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
-	
+
 	/**
 	 * The web address for the remote questions json file
 	 */
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
-	
+
 	/**
 	 * The repository for the questions
 	 */
 	public static final String	QUESTIONS_REPO			= "https://github.com/Commador/JavaTestQuestions";
-	
+
 	/**
 	 * The project repo
 	 */
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
-	
+
 	/**
 	 * Sun property pointing the main class and its arguments.
 	 * Might not be defined on non Hotspot VM implementations.
 	 */
 	public static final String	SUN_JAVA_COMMAND		= "sun.java.command";
-	
+
 	/**
 	 * The temporary directory path, and I can't remember what I wanted to do
 	 */
 	public static final String	TEMP					= ".jtest_temp/";
-	
+
 	/**
 	 * The "about" window
 	 */
 	private static JFrame		aboutWindow;
-	
+
 	/**
 	 * The primary application window
 	 */
 	private static JFrame		appWindow;
-	
+
 	/**
 	 * The local questions
 	 */
 	private static Questions	localQuestions;
 	
-	private static Score		score;
+	private static State		state;
 
 	/**
 	 * Cleanup the games objects
@@ -191,7 +191,7 @@ public final class JTest
 		final Gson gson = new Gson();
 		return gson.fromJson(json, Questions.class).version;
 	}
-
+	
 	/**
 	 * @return the remote questions
 	 */
@@ -211,17 +211,17 @@ public final class JTest
 		return JTest.getRemoteQuestions();
 	}
 
-	public static Score getScore()
-	{
-		return JTest.score;
-	}
-	
 	public static String getScoreFormatted()
 	{
 		return "";
 		// TODO
 	}
-	
+
+	public static State getState()
+	{
+		return JTest.state;
+	}
+
 	public static void infoBox(final String infoMessage, final String titleBar)
 	{
 		JOptionPane.showMessageDialog(null, infoMessage,
@@ -292,7 +292,7 @@ public final class JTest
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Determines whether or not the questions need to be updated, updates them,
 	 * and then loads them as an instance of {@link Questions}
@@ -303,7 +303,7 @@ public final class JTest
 	{
 		final boolean connection = JTest.isInternetReachable();
 		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL)
-		.exists();
+				.exists();
 		if (!connection && !isLocalPresent)
 		{
 			JTest.infoBox(
@@ -361,7 +361,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -397,7 +397,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Parses a file to a readable string
 	 *
@@ -438,7 +438,7 @@ public final class JTest
 		}
 		return universe;
 	}
-
+	
 	/**
 	 * Parses a remote url to a string
 	 *
@@ -460,7 +460,7 @@ public final class JTest
 			{
 				buffer.append(chars, 0, read);
 			}
-			
+
 			return buffer.toString();
 		}
 		finally
@@ -491,7 +491,7 @@ public final class JTest
 			JTest.infoBox(e.getMessage(), "");
 		}
 	}
-	
+
 	/**
 	 * Restart the current Java application
 	 *
@@ -561,7 +561,7 @@ public final class JTest
 					"Error while trying to restart the application", e);
 		}
 	}
-	
+
 	/**
 	 * @param localQuestions
 	 */
@@ -571,16 +571,19 @@ public final class JTest
 		JTest.localQuestions = localQuestions;
 	}
 
-	public static void setScore(final Score score)
+	public static void setState(final State state)
 	{
-		JTest.score = score;
+		if ((state == null) || (state == JTest.state)) { return; }
+		JTest.logger.info("Game state changing from " + JTest.state.toString()
+				+ " to " + state.toString());
+		JTest.state = state;
 	}
-	
+
 	public static boolean shouldUpdateQuestions()
 	{
 		return JTest.getRemoteQuestions().version > JTest.getLocalQuestions().version;
 	}
-	
+
 	/**
 	 * Show the about window
 	 */
@@ -610,7 +613,7 @@ public final class JTest
 		}
 		return array;
 	}
-	
+
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the
 	 * contents untouched
@@ -653,6 +656,6 @@ public final class JTest
 	
 	private JTest()
 	{
-
+		
 	}
 }
