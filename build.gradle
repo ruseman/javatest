@@ -6,6 +6,15 @@ repositories {
   mavenCentral()
 }
 
+configurations {
+    provided
+}
+
+dependencies {
+	provided (group: 'com.google.guava', name: 'guava', version: '12.0')
+	provided ('com.google.code.gson:gson:2.3')
+}
+
 group = "xyz.voxio"
 archivesBaseName = 'javatest'
 version = '0.1.0'
@@ -13,11 +22,7 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 mainClassName = "xyz.voxio.jtest.JTest"
 applicationDefaultJvmArgs = ["-Dgreeting.language=en"]
-applicationName = "Java Test"
-
-configurations {
-    provided
-}
+applicationName = "JavaTest"
 
 compileJava {
     sourceSets.main.compileClasspath += configurations.provided
@@ -30,15 +35,6 @@ run {
 eclipse{
 	classpath{
 		plusConfigurations += [configurations.provided]
-	}
-}
-
-dependencies {
-	provided (group: 'com.google.guava', name: 'guava', version: '12.0'){
-		transitive = false
-	}
-	provided ('com.google.code.gson:gson:2.3'){
-		transitive = false
 	}
 }
 
@@ -58,6 +54,7 @@ jar {
 		configurations.provided.collect{
 			it.isDirectory()?it:zipTree(it)
 		}
+		"LICENSE.md"
 	}{
 		exclude "META-INF/*.SF"
 		exclude "META-INF/*.DSA"
@@ -79,22 +76,9 @@ task copyLicense {
         }
     }
 }
-
-task copyReadme {outputs.file new File("$buildDir/README.md")
-    doLast {
-        copy {
-            from "README.md"
-            into "$buildDir"
-        }
-    }
-}
  
 applicationDistribution.from(copyLicense) {
     into ""
-}
-
-applicationDistribution.from(copyReadme){
-	into ""
 }
 
 String findJavacExecutable() {
