@@ -581,7 +581,15 @@ public final class JTest
 
 	public static boolean shouldUpdateQuestions()
 	{
-		return JTest.getRemoteQuestions().version > JTest.getLocalQuestions().version;
+		try
+		{
+			return JTest.getRemoteQuestions().version > JTest.getLocalQuestions().version;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return true;
+		}
 	}
 
 	/**
