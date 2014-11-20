@@ -16,7 +16,14 @@ public final class Score
 	{
 		return this.score;
 	}
-
+	
+	public String formatHTML()
+	{
+		String prefix = "<div align=\"center\"><p><b>";
+		String suffix = "</b></p></div>";
+		return prefix + getFormatted() + suffix;
+	}
+	
 	public String getFormatted()
 	{
 		final NumberFormat fmt = NumberFormat.getCurrencyInstance(Locale.US);

@@ -11,7 +11,19 @@ public class Player
 
 	public void choose(final Choice c)
 	{
-
+		switch(c)
+		{
+			case A:
+				break;
+			case B:
+				break;
+			case C:
+				break;
+			case D:
+				break;
+			case RUN:
+				break;
+		}
 	}
 
 	public Score score()
