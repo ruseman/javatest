@@ -5,7 +5,7 @@ import java.util.List;
 public final class Question
 {
 	public List<String>	answers;
-
+	
 	/**
 	 * The prompt for the question
 	 */

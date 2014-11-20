@@ -2,20 +2,20 @@ package xyz.voxio.jtest;
 
 public class Player
 {
+	private final Score	score;
+
 	public Player()
 	{
-		score = new Score(0);
+		this.score = new Score(0);
 	}
-	
-	private final Score score;
-	
+
+	public void choose(final Choice c)
+	{
+
+	}
+
 	public Score score()
 	{
-		return score;
-	}
-	
-	public void choose(Choice c)
-	{
-		
+		return this.score;
 	}
 }

@@ -5,22 +5,22 @@ import java.util.Locale;
 
 public final class Score
 {
+	private int	score	= 0;
+
 	public Score(final int i)
 	{
-		score += i;
+		this.score += i;
 	}
-	
-	private int score = 0;
-	
+
 	public int get()
 	{
-		return score;
+		return this.score;
 	}
-	
+
 	public String getFormatted()
 	{
-		NumberFormat fmt = NumberFormat.getCurrencyInstance(Locale.US);
-		double score = get();
+		final NumberFormat fmt = NumberFormat.getCurrencyInstance(Locale.US);
+		final double score = this.get();
 		return fmt.format(score);
 	}
 }
