@@ -5,5 +5,5 @@ package xyz.voxio.jtest.game;
  */
 public final class Question
 {
-	
+
 }

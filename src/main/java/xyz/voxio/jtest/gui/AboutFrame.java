@@ -8,14 +8,14 @@ import javax.swing.border.EmptyBorder;
 
 public final class AboutFrame extends JFrame
 {
-
+	
 	/**
 	 *
 	 */
 	private static final long	serialVersionUID	= -4208952844824385757L;
-	
-	private final JPanel		contentPane;
 
+	private final JPanel		contentPane;
+	
 	/**
 	 * Create the frame.
 	 */
@@ -28,5 +28,5 @@ public final class AboutFrame extends JFrame
 		this.contentPane.setLayout(new BorderLayout(0, 0));
 		this.setContentPane(this.contentPane);
 	}
-
+	
 }
