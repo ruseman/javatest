@@ -21,15 +21,17 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import xyz.voxio.jtest.game.Questions;
 import xyz.voxio.jtest.gui.AboutFrame;
 import xyz.voxio.jtest.gui.AppFrame;
 
@@ -48,8 +50,7 @@ public final class JTest
 	/**
 	 * The {@link Logger} used by the application
 	 */
-	public static final Logger	logger					= Logger.getLogger(JTest.class
-			.getCanonicalName());
+	public static final Logger	logger					= Logger.getLogger(JTest.class.getCanonicalName());
 	
 	/**
 	 * The web address for the pull requests page
@@ -75,7 +76,7 @@ public final class JTest
 	 * The project repo
 	 */
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
-		
+
 	/**
 	 * The temporary directory path, and I can't remember what I wanted to do
 	 */
@@ -84,12 +85,12 @@ public final class JTest
 	/**
 	 * The "about" window
 	 */
-	private static JFrame		aboutWindow;
+	private static AboutFrame	aboutWindow;
 	
 	/**
 	 * The primary application window
 	 */
-	private static JFrame		appWindow;
+	private static AppFrame		appWindow;
 	
 	/**
 	 * The local questions
@@ -97,21 +98,18 @@ public final class JTest
 	private static Questions	localQuestions;
 
 	private static State		state;
-	
+
 	public static void changeState(final State state)
 	{
 		if ((state == null) || (state == JTest.state)) { return; }
-		JTest.logger.info("Game state changing from " + JTest.state.toString()
-				+ " to " + state.toString());
+		if(JTest.state==null)
+		{
+			JTest.state = state;
+			logger.info("Game state is now " + JTest.state.toString());
+			return;
+		}
+		JTest.logger.info("Game state changing from " + JTest.state.toString() + " to " + state.toString());
 		JTest.state = state;
-	}
-
-	/**
-	 * Cleanup the games objects
-	 */
-	public static void cleanup()
-	{
-		// There doesn't seem to be a whole lot that's actually necessary :/
 	}
 	
 	public static void cloneQuestions()
@@ -123,10 +121,8 @@ public final class JTest
 				new File(JTest.QUESTIONS_JSON_LOCAL).createNewFile();
 			}
 			final URL remote = new URL(JTest.QUESTIONS_JSON_REMOTE);
-			final ReadableByteChannel rbc = Channels.newChannel(remote
-					.openStream());
-			final FileOutputStream fos = new FileOutputStream(
-					JTest.QUESTIONS_JSON_LOCAL);
+			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
+			final FileOutputStream fos = new FileOutputStream(JTest.QUESTIONS_JSON_LOCAL);
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			fos.close();
 		}
@@ -149,8 +145,7 @@ public final class JTest
 	{
 		try
 		{
-			Files.copy(remote.toURL().openStream(), Paths.get(local),
-					StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(remote.toURL().openStream(), Paths.get(local), StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (final MalformedURLException e)
 		{
@@ -169,18 +164,29 @@ public final class JTest
 	{
 		if (JTest.localQuestions == null)
 		{
-			final String json = JTest.parseFileToString(new File(
-					JTest.QUESTIONS_JSON_LOCAL));
+			final String json = JTest.parseFileToString(new File(JTest.QUESTIONS_JSON_LOCAL));
 			final Gson gson = new Gson();
 			final Questions newQ = gson.fromJson(json, Questions.class);
 			JTest.localQuestions = newQ;
 		}
 		return JTest.localQuestions;
 	}
-
+	
 	public static File getLocalQuestionsFile()
 	{
 		return new File(JTest.QUESTIONS_JSON_LOCAL);
+	}
+
+	public static <K, V> Map<K, V> getMapFromLists(final List<K> keyList, final List<V> valueList)
+	{
+		if (keyList.size() != valueList.size()) { throw new IllegalArgumentException("Cannot combine lists of unequal sizes"); }
+		final int size = keyList.size();
+		final Map<K, V> map = new HashMap<K, V>();
+		for (int i = 0; i < size; i++)
+		{
+			map.put(keyList.get(i), valueList.get(i));
+		}
+		return map;
 	}
 	
 	/**
@@ -190,8 +196,7 @@ public final class JTest
 	{
 		try
 		{
-			final String json = JTest.parseURLtoString(new URL(
-					JTest.QUESTIONS_JSON_REMOTE));
+			final String json = JTest.parseURLtoString(new URL(JTest.QUESTIONS_JSON_REMOTE));
 			final Gson gson = new Gson();
 			return gson.fromJson(json, Questions.class);
 		}
@@ -206,12 +211,14 @@ public final class JTest
 	{
 		return JTest.state;
 	}
-
+	
 	/**
 	 * Displays an info box with the given title and message.
-	 * 
-	 * @param infoMessage the message
-	 * @param titleBar the title
+	 *
+	 * @param infoMessage
+	 *            the message
+	 * @param titleBar
+	 *            the title
 	 */
 	public static void infoBox(final String infoMessage, final String titleBar)
 	{
@@ -223,36 +230,47 @@ public final class JTest
 	 */
 	public static void initialize()
 	{
-		final File tempDir = new File(JTest.TEMP);
-		tempDir.mkdir();
-		tempDir.deleteOnExit();
+		changeState(State.INITIALIZING);
+		{
+			logger.info("Dirs being mkd");
+			final File tempDir = new File(JTest.TEMP);
+			tempDir.mkdir();
+			tempDir.deleteOnExit();
+		}
+		logger.info("Loading the questions");
 		JTest.setLocalQuestions(JTest.loadQuestions());
-		Runtime.getRuntime().addShutdownHook(new Thread()
+		logger.info("Questions have been loaded");
 		{
-			@Override
-			public void run()
+			logger.info("Registering shutdown hook");
+			Runtime.getRuntime().addShutdownHook(new Thread()
 			{
-				JTest.changeState(xyz.voxio.jtest.State.SHUTTING_DOWN);
-				JTest.cleanup();
-			}
-		});
-		EventQueue.invokeLater(new Runnable()
+				@Override
+				public void run()
+				{
+					JTest.changeState(xyz.voxio.jtest.State.SHUTTING_DOWN);
+				}
+			});
+		}
 		{
-			@Override
-			public void run()
+			logger.info("Invoking later...");
+			EventQueue.invokeLater(new Runnable()
 			{
-				try
+				@Override
+				public void run()
 				{
-					JTest.appWindow = new AppFrame();
-					JTest.aboutWindow = new AboutFrame();
-					JTest.appWindow.setVisible(true);
+					try
+					{
+						JTest.appWindow = new AppFrame();
+						JTest.aboutWindow = new AboutFrame();
+						JTest.appWindow.setVisible(true);
+					}
+					catch (final Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
-				catch (final Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
+			});
+		}
 	}
 	
 	/**
@@ -264,24 +282,25 @@ public final class JTest
 	 */
 	public static boolean isInternetReachable()
 	{
+		boolean value;
 		try
 		{
 			final URL url = new URL(JTest.GITHUB);
-			final HttpURLConnection urlConnect = (HttpURLConnection) url
-					.openConnection();
+			final HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
 			urlConnect.getContent();
 		}
 		catch (final UnknownHostException e)
 		{
 			e.printStackTrace();
-			return false;
+			value =  false;
 		}
 		catch (final IOException e)
 		{
 			e.printStackTrace();
-			return false;
+			value = false;
 		}
-		return true;
+		value = true;
+		return value;
 	}
 
 	/**
@@ -293,13 +312,10 @@ public final class JTest
 	public static Questions loadQuestions()
 	{
 		final boolean connection = JTest.isInternetReachable();
-		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL)
-		.exists();
+		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL).exists();
 		if (!connection && !isLocalPresent)
 		{
-			JTest.infoBox(
-					"There are no local questions stored, and there is no internet connection.\nThe application must now close.",
-					"Error");
+			JTest.infoBox("There are no local questions stored, and there is no internet connection.\nThe application must now close.", "Error");
 			JTest.shutdown();
 			return null;
 		}
@@ -463,24 +479,9 @@ public final class JTest
 		}
 	}
 	
-	public static void restartApplication()
+	public static void refreshPanes()
 	{
-		try
-		{
-			JTest.restartApplication(new Thread()
-			{
-				@Override
-				public void run()
-				{
-					JTest.cleanup();
-				}
-			});
-		}
-		catch (final IOException e)
-		{
-			e.printStackTrace();
-			JTest.infoBox(e.getMessage(), "");
-		}
+		//TODO
 	}
 	
 	/**
@@ -490,68 +491,64 @@ public final class JTest
 	 *            some custom code to be run before restarting
 	 * @throws IOException
 	 */
-	public static void restartApplication(final Runnable runBeforeRestart)
-			throws IOException
+	public static void restartApplication()
 	{
-		final String SUN_JAVA_COMMAND		= "sun.java.command";
-		try
+		changeState(State.RESTARTING);
+		final Runnable runBeforeRestart = new Runnable()
 		{
-			final String java = System.getProperty("java.home") + "/bin/java";
-			final List<String> vmArguments = ManagementFactory
-					.getRuntimeMXBean().getInputArguments();
-			final StringBuffer vmArgsOneLine = new StringBuffer();
-			for (final String arg : vmArguments)
+			@Override
+			public void run()
 			{
-				if (!arg.contains("-agentlib"))
+
+			}
+		};
+		final String SUN_JAVA_COMMAND = "sun.java.command";
+		final String java = System.getProperty("java.home") + "/bin/java";
+		final List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+		final StringBuffer vmArgsOneLine = new StringBuffer();
+		for (final String arg : vmArguments)
+		{
+			if (!arg.contains("-agentlib"))
+			{
+				vmArgsOneLine.append(arg);
+				vmArgsOneLine.append(" ");
+			}
+		}
+		final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + vmArgsOneLine);
+		final String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
+		if (mainCommand[0].endsWith(".jar"))
+		{
+			cmd.append("-jar " + new File(mainCommand[0]).getPath());
+		}
+		else
+		{
+			cmd.append("-cp \"" + System.getProperty("java.class.path") + "\" " + mainCommand[0]);
+		}
+		for (int i = 1; i < mainCommand.length; i++)
+		{
+			cmd.append(" ");
+			cmd.append(mainCommand[i]);
+		}
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				try
 				{
-					vmArgsOneLine.append(arg);
-					vmArgsOneLine.append(" ");
+					Runtime.getRuntime().exec(cmd.toString());
+				}
+				catch (final IOException e)
+				{
+					e.printStackTrace();
 				}
 			}
-			final StringBuffer cmd = new StringBuffer("\"" + java + "\" "
-					+ vmArgsOneLine);
-			final String[] mainCommand = System.getProperty(
-					SUN_JAVA_COMMAND).split(" ");
-			if (mainCommand[0].endsWith(".jar"))
-			{
-				cmd.append("-jar " + new File(mainCommand[0]).getPath());
-			}
-			else
-			{
-				cmd.append("-cp \"" + System.getProperty("java.class.path")
-						+ "\" " + mainCommand[0]);
-			}
-			for (int i = 1; i < mainCommand.length; i++)
-			{
-				cmd.append(" ");
-				cmd.append(mainCommand[i]);
-			}
-			Runtime.getRuntime().addShutdownHook(new Thread()
-			{
-				@Override
-				public void run()
-				{
-					try
-					{
-						Runtime.getRuntime().exec(cmd.toString());
-					}
-					catch (final IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			});
-			if (runBeforeRestart != null)
-			{
-				runBeforeRestart.run();
-			}
-			System.exit(0);
-		}
-		catch (final Exception e)
+		});
+		if (runBeforeRestart != null)
 		{
-			throw new IOException(
-					"Error while trying to restart the application", e);
+			runBeforeRestart.run();
 		}
+		System.exit(0);
 	}
 	
 	/**
@@ -562,13 +559,12 @@ public final class JTest
 		if (localQuestions == null) { return; }
 		JTest.localQuestions = localQuestions;
 	}
-	
+
 	public static boolean shouldUpdateQuestions()
 	{
 		try
 		{
-			return JTest.getRemoteQuestions().version > JTest
-					.getLocalQuestions().version;
+			return JTest.getRemoteQuestions().getVersion() > JTest.getLocalQuestions().getVersion();
 		}
 		catch (final Exception e)
 		{
@@ -584,7 +580,7 @@ public final class JTest
 	{
 		JTest.aboutWindow.setVisible(true);
 	}
-
+	
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the
 	 * contents untouched
@@ -606,7 +602,7 @@ public final class JTest
 		}
 		return array;
 	}
-	
+
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the
 	 * contents untouched
@@ -629,14 +625,13 @@ public final class JTest
 		}
 		return array;
 	}
-	
+
 	/**
 	 * Shutdown the application nicely
 	 */
 	public static void shutdown()
 	{
 		JTest.changeState(State.SHUTTING_DOWN);
-		JTest.cleanup();
 		System.exit(0);
 	}
 
@@ -645,12 +640,12 @@ public final class JTest
 	 */
 	public static void start()
 	{
-		// I'm really not sure what I'm going to do here. I had a great idea,
-		// but it's forgotten now
+		changeState(State.RUNNING);
+		logger.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
 	}
 
-	private JTest()
+	private JTest() throws Exception
 	{
-
+		throw new Exception();
 	}
 }

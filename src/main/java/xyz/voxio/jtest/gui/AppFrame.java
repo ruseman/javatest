@@ -1,7 +1,5 @@
 package xyz.voxio.jtest.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -51,8 +49,7 @@ public final class AppFrame extends JFrame
 		final JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
-		final JMenuItem mntmRefreshApplication = new JMenuItem(
-				"Refresh application");
+		final JMenuItem mntmRefreshApplication = new JMenuItem("Refresh application");
 		mntmRefreshApplication.addMouseListener(new MouseAdapter()
 		{
 			@Override
@@ -128,10 +125,10 @@ public final class AppFrame extends JFrame
 		mnMeta.add(mntmAbout);
 		
 		final JButton btnA = new JButton("A");
-		btnA.addActionListener(new ActionListener()
+		btnA.addMouseListener(new MouseAdapter()
 		{
 			@Override
-			public void actionPerformed(final ActionEvent e)
+			public void mousePressed(final MouseEvent e)
 			{
 			}
 		});
@@ -139,14 +136,35 @@ public final class AppFrame extends JFrame
 		this.contentPane.add(btnA);
 		
 		final JButton btnB = new JButton("B");
+		btnB.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(final MouseEvent e)
+			{
+			}
+		});
 		btnB.setBounds(120, 314, 100, 45);
 		this.contentPane.add(btnB);
 		
 		final JButton btnC = new JButton("C");
+		btnC.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(final MouseEvent e)
+			{
+			}
+		});
 		btnC.setBounds(10, 370, 100, 45);
 		this.contentPane.add(btnC);
 		
 		final JButton btnD = new JButton("D");
+		btnD.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(final MouseEvent e)
+			{
+			}
+		});
 		btnD.setBounds(120, 370, 100, 45);
 		this.contentPane.add(btnD);
 		
@@ -155,6 +173,13 @@ public final class AppFrame extends JFrame
 		this.contentPane.add(this.questionPane);
 		
 		final JButton btnRun = new JButton("Run");
+		btnRun.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(final MouseEvent e)
+			{
+			}
+		});
 		btnRun.setBounds(382, 370, 100, 45);
 		this.contentPane.add(btnRun);
 		
@@ -163,38 +188,19 @@ public final class AppFrame extends JFrame
 		this.contentPane.add(this.scorePane);
 	}
 
-	public JEditorPane getEditorPane()
+	@Override
+	public JPanel getContentPane()
+	{
+		return this.contentPane;
+	}
+
+	public JEditorPane getQuestionPane()
 	{
 		return this.questionPane;
 	}
 
-	public String getEditorPaneText()
+	public JEditorPane getScorePane()
 	{
-		return this.questionPane.getText();
-	}
-
-	public String getScorePaneText()
-	{
-		return this.scorePane.getText();
-	}
-
-	public String getThisTitle()
-	{
-		return this.getTitle();
-	}
-
-	public void setEditorPaneText(final String text_1)
-	{
-		this.questionPane.setText(text_1);
-	}
-
-	public void setScorePaneText(final String text)
-	{
-		this.scorePane.setText(text);
-	}
-
-	public void setThisTitle(final String title)
-	{
-		this.setTitle(title);
+		return this.scorePane;
 	}
 }
