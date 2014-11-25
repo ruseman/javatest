@@ -33,9 +33,11 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import xyz.voxio.jtest.game.Player;
 import xyz.voxio.jtest.game.Questions;
 import xyz.voxio.jtest.gui.AboutFrame;
 import xyz.voxio.jtest.gui.AppFrame;
+import xyz.voxio.jtest.gui.EndFrame;
 
 public final class JTest
 {
@@ -43,67 +45,81 @@ public final class JTest
 	 * The web address for github, used to test the internet connectivity
 	 */
 	public static final String	GITHUB					= "https://github.com/";
-
+	
 	/**
 	 * The web address for the issue tracker
 	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
-
+	
 	/**
 	 * The {@link Logger} used by the application
 	 */
 	public static final Logger	logger					= Logger.getLogger(JTest.class
-																.getCanonicalName());
-
+			.getCanonicalName());
+	
 	/**
 	 * The web address for the pull requests page
 	 */
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
-
+	
 	/**
 	 * The path to the local questions json file
 	 */
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
-
+	
 	/**
 	 * The web address for the remote questions json file
 	 */
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
-
+	
 	/**
 	 * The repository for the questions
 	 */
 	public static final String	QUESTIONS_REPO			= "https://github.com/Commador/JavaTestQuestions";
-
+	
 	/**
 	 * The project repo
 	 */
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
-	
+
 	/**
 	 * The temporary directory path, and I can't remember what I wanted to do
 	 */
 	public static final String	TEMP					= ".jtest_temp/";
-
+	
 	public static final String	TITLE					= "JTest";
-
+	
 	/**
 	 * The "about" window
 	 */
 	private static AboutFrame	aboutWindow;
-
+	
 	/**
 	 * The primary application window
 	 */
 	private static AppFrame		appWindow;
+
+	private static EndFrame endFrame;
+	
+	public static EndFrame endFrame()
+	{
+		return endFrame;
+	}
+	
+	private static Player player;
+	
+	public static Player player()
+	{
+		return player;
+	}
 	
 	/**
 	 * The local questions
 	 */
 	private static Questions	localQuestions;
-	
-	private static State		state;
 
+	private static State		state;
+	
 	public static void changeState(final State state)
 	{
 		if ((state == null) || (state == JTest.state)) { return; }
@@ -117,7 +133,7 @@ public final class JTest
 				+ " to " + state.toString());
 		JTest.state = state;
 	}
-	
+		
 	public static void cloneQuestions()
 	{
 		try
@@ -139,7 +155,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Copies a remote web address to a local file path, although I suppose it
 	 * could be used to copy a local to a local
@@ -165,7 +181,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * @return the local questions
 	 */
@@ -181,15 +197,15 @@ public final class JTest
 		}
 		return JTest.localQuestions;
 	}
-	
+
 	public static File getLocalQuestionsFile()
 	{
 		return new File(JTest.QUESTIONS_JSON_LOCAL);
 	}
-
+	
 	public static <K, V> Map<K, V> getMapFromLists(final List<K> keyList,
 			final List<V> valueList)
-	{
+			{
 		if (keyList.size() != valueList.size()) { throw new IllegalArgumentException(
 				"Cannot combine lists of unequal sizes"); }
 		final int size = keyList.size();
@@ -199,23 +215,23 @@ public final class JTest
 			map.put(keyList.get(i), valueList.get(i));
 		}
 		return map;
-	}
-
+			}
+	
 	public static String getNewTitle()
 	{
 		// TODO load a splash from the JSON, then add it to the Title, so that
 // it looks like 'Title - SPLASH'
 		return JTest.TITLE + " - " + JTest.getRandomSplash();
 	}
-
+	
 	public static String getRandomSplash()
 	{
 		return new Gson().fromJson(
 				JTest.parseStreamToString(JTest.class
 						.getResourceAsStream("splash.json")), Splash.class)
-				.getRandomSplash();
+						.getRandomSplash();
 	}
-
+	
 	/**
 	 * @return the remote questions
 	 */
@@ -234,12 +250,12 @@ public final class JTest
 		}
 		return JTest.getRemoteQuestions();
 	}
-
+	
 	public static State getState()
 	{
 		return JTest.state;
 	}
-	
+
 	/**
 	 * Displays an info box with the given title and message.
 	 *
@@ -253,7 +269,7 @@ public final class JTest
 		JOptionPane.showMessageDialog(null, infoMessage, titleBar,
 				JOptionPane.INFORMATION_MESSAGE);
 	}
-
+	
 	/**
 	 * Initializes the application, creating the necessary objects
 	 */
@@ -301,7 +317,7 @@ public final class JTest
 			});
 		}
 	}
-
+	
 	/**
 	 * Pings google.com to determine whether or not the internet is reachable.
 	 * If google is not reachable, then society has clearly collapsed, so this
@@ -332,7 +348,7 @@ public final class JTest
 		value = true;
 		return value;
 	}
-	
+
 	/**
 	 * Determines whether or not the questions need to be updated, updates them,
 	 * and then loads them as an instance of {@link Questions}
@@ -343,7 +359,7 @@ public final class JTest
 	{
 		final boolean connection = JTest.isInternetReachable();
 		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL)
-				.exists();
+		.exists();
 		if (!connection && !isLocalPresent)
 		{
 			JTest.infoBox(
@@ -374,7 +390,7 @@ public final class JTest
 			}
 		}
 	}
-	
+
 	/**
 	 * Launches the application
 	 */
@@ -383,7 +399,7 @@ public final class JTest
 		JTest.initialize();
 		JTest.start();
 	}
-	
+
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -401,7 +417,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -419,7 +435,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -437,7 +453,7 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Parses a file to a readable string
 	 *
@@ -478,7 +494,7 @@ public final class JTest
 		}
 		return universe;
 	}
-
+	
 	public static String parseStreamToString(final InputStream is)
 	{
 		@SuppressWarnings("resource")
@@ -486,7 +502,7 @@ public final class JTest
 		final Scanner s = new Scanner(is).useDelimiter("\\A");
 		return s.hasNext() ? s.next() : "";
 	}
-	
+
 	/**
 	 * Parses a remote url to a string
 	 *
@@ -508,7 +524,7 @@ public final class JTest
 			{
 				buffer.append(chars, 0, read);
 			}
-
+			
 			return buffer.toString();
 		}
 		finally
@@ -519,12 +535,12 @@ public final class JTest
 			}
 		}
 	}
-
+	
 	public static void refreshPanes()
 	{
 		// TODO
 	}
-
+	
 	/**
 	 * Restart the current Java application
 	 *
@@ -540,7 +556,7 @@ public final class JTest
 			@Override
 			public void run()
 			{
-				
+
 			}
 		};
 		final String SUN_JAVA_COMMAND = "sun.java.command";
@@ -595,7 +611,7 @@ public final class JTest
 		}
 		System.exit(0);
 	}
-	
+
 	/**
 	 * @param localQuestions
 	 */
@@ -604,7 +620,7 @@ public final class JTest
 		if (localQuestions == null) { return; }
 		JTest.localQuestions = localQuestions;
 	}
-	
+
 	public static boolean shouldUpdateQuestions()
 	{
 		try
@@ -618,7 +634,7 @@ public final class JTest
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Show the about window
 	 */
@@ -626,7 +642,7 @@ public final class JTest
 	{
 		JTest.aboutWindow.setVisible(true);
 	}
-	
+
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the
 	 * contents untouched
@@ -648,7 +664,7 @@ public final class JTest
 		}
 		return array;
 	}
-
+	
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the
 	 * contents untouched
@@ -671,7 +687,7 @@ public final class JTest
 		}
 		return array;
 	}
-
+	
 	/**
 	 * Shutdown the application nicely
 	 */
@@ -680,7 +696,7 @@ public final class JTest
 		JTest.changeState(State.SHUTTING_DOWN);
 		System.exit(0);
 	}
-	
+
 	/**
 	 * Start the game
 	 */
@@ -688,9 +704,9 @@ public final class JTest
 	{
 		JTest.changeState(State.RUNNING);
 		JTest.logger
-				.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
+		.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
 	}
-
+	
 	private JTest() throws Exception
 	{
 		throw new Exception();

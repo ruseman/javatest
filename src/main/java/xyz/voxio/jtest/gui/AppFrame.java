@@ -17,18 +17,18 @@ import xyz.voxio.jtest.JTest;
 
 public final class AppFrame extends JFrame
 {
-	
+
 	/**
 	 *
 	 */
 	private static final long	serialVersionUID	= 4593115469915216836L;
-
+	
 	private final JPanel		contentPane;
-	
-	private final JEditorPane	questionPane;
-	
-	private final JEditorPane	scorePane;
 
+	private final JEditorPane	questionPane;
+
+	private final JEditorPane	scorePane;
+	
 	/**
 	 * Create the frame.
 	 */
@@ -41,14 +41,14 @@ public final class AppFrame extends JFrame
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(this.contentPane);
 		this.contentPane.setLayout(null);
-
+		
 		final JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(5, 5, 482, 21);
 		this.contentPane.add(menuBar);
-
+		
 		final JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
-
+		
 		final JMenuItem mntmRefreshApplication = new JMenuItem(
 				"Refresh application");
 		mntmRefreshApplication.addMouseListener(new MouseAdapter()
@@ -60,10 +60,10 @@ public final class AppFrame extends JFrame
 			}
 		});
 		mnFile.add(mntmRefreshApplication);
-
+		
 		final JSeparator sep0 = new JSeparator();
 		mnFile.add(sep0);
-
+		
 		final JMenuItem mntmExit = new JMenuItem("Exit...");
 		mntmExit.addMouseListener(new MouseAdapter()
 		{
@@ -74,10 +74,10 @@ public final class AppFrame extends JFrame
 			}
 		});
 		mnFile.add(mntmExit);
-
+		
 		final JMenu mnMeta = new JMenu("Meta");
 		menuBar.add(mnMeta);
-
+		
 		final JMenuItem mntmSourceCode = new JMenuItem("Source Code");
 		mntmSourceCode.addMouseListener(new MouseAdapter()
 		{
@@ -88,7 +88,7 @@ public final class AppFrame extends JFrame
 			}
 		});
 		mnMeta.add(mntmSourceCode);
-
+		
 		final JMenuItem mntmIssues = new JMenuItem("Issues");
 		mntmIssues.addMouseListener(new MouseAdapter()
 		{
@@ -99,7 +99,7 @@ public final class AppFrame extends JFrame
 			}
 		});
 		mnMeta.add(mntmIssues);
-
+		
 		final JMenuItem mntmContriboot = new JMenuItem("Contriboot");
 		mntmContriboot.addMouseListener(new MouseAdapter()
 		{
@@ -110,10 +110,10 @@ public final class AppFrame extends JFrame
 			}
 		});
 		mnMeta.add(mntmContriboot);
-
+		
 		final JSeparator sep1 = new JSeparator();
 		mnMeta.add(sep1);
-
+		
 		final JMenuItem mntmAbout = new JMenuItem("About");
 		mntmAbout.addMouseListener(new MouseAdapter()
 		{
@@ -124,7 +124,7 @@ public final class AppFrame extends JFrame
 			}
 		});
 		mnMeta.add(mntmAbout);
-
+		
 		final JButton btnA = new JButton("A");
 		btnA.addMouseListener(new MouseAdapter()
 		{
@@ -135,7 +135,7 @@ public final class AppFrame extends JFrame
 		});
 		btnA.setBounds(10, 314, 100, 45);
 		this.contentPane.add(btnA);
-
+		
 		final JButton btnB = new JButton("B");
 		btnB.addMouseListener(new MouseAdapter()
 		{
@@ -146,7 +146,7 @@ public final class AppFrame extends JFrame
 		});
 		btnB.setBounds(120, 314, 100, 45);
 		this.contentPane.add(btnB);
-
+		
 		final JButton btnC = new JButton("C");
 		btnC.addMouseListener(new MouseAdapter()
 		{
@@ -157,7 +157,7 @@ public final class AppFrame extends JFrame
 		});
 		btnC.setBounds(10, 370, 100, 45);
 		this.contentPane.add(btnC);
-
+		
 		final JButton btnD = new JButton("D");
 		btnD.addMouseListener(new MouseAdapter()
 		{
@@ -168,11 +168,11 @@ public final class AppFrame extends JFrame
 		});
 		btnD.setBounds(120, 370, 100, 45);
 		this.contentPane.add(btnD);
-
+		
 		this.questionPane = new JEditorPane();
 		this.questionPane.setBounds(15, 37, 467, 257);
 		this.contentPane.add(this.questionPane);
-
+		
 		final JButton btnRun = new JButton("Run");
 		btnRun.addMouseListener(new MouseAdapter()
 		{
@@ -183,23 +183,23 @@ public final class AppFrame extends JFrame
 		});
 		btnRun.setBounds(382, 370, 100, 45);
 		this.contentPane.add(btnRun);
-
+		
 		this.scorePane = new JEditorPane();
 		this.scorePane.setBounds(230, 314, 142, 101);
 		this.contentPane.add(this.scorePane);
 	}
-	
+
 	@Override
 	public JPanel getContentPane()
 	{
 		return this.contentPane;
 	}
-	
+
 	public JEditorPane getQuestionPane()
 	{
 		return this.questionPane;
 	}
-	
+
 	public JEditorPane getScorePane()
 	{
 		return this.scorePane;
