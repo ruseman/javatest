@@ -9,12 +9,12 @@ import javax.swing.border.EmptyBorder;
 
 public class EndFrame extends JFrame
 {
-	
+
 	/**
 	 *
 	 */
 	private static final long	serialVersionUID	= 8460174383251093325L;
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -37,9 +37,9 @@ public class EndFrame extends JFrame
 			}
 		});
 	}
-	
+
 	private final JPanel	contentPane;
-	
+
 	/**
 	 * Create the frame.
 	 */
@@ -52,5 +52,5 @@ public class EndFrame extends JFrame
 		this.contentPane.setLayout(new BorderLayout(0, 0));
 		this.setContentPane(this.contentPane);
 	}
-	
+
 }
