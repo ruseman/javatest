@@ -4,6 +4,10 @@ apply plugin: 'application'
 
 repositories {
   mavenCentral()
+  maven{
+        name = "forgemaven"
+        url = "http://files.minecraftforge.net/maven/"
+    }
 }
 
 configurations {
@@ -11,8 +15,9 @@ configurations {
 }
 
 dependencies {
-	compile (group: 'com.google.guava', name: 'guava', version: '12.0')
-	compile ('com.google.code.gson:gson:2.3')
+	compile 'com.google.guava:guava:12.0'
+	compile 'com.google.code.gson:gson:2.3'
+	//compile 'xyz.voxio:lib:0.1.0'
 }
 
 group = "xyz.voxio"
