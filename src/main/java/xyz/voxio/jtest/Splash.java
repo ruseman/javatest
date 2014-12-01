@@ -3,7 +3,7 @@ package xyz.voxio.jtest;
 import java.util.List;
 import java.util.Random;
 
-public class Splash
+public final class Splash
 {
 	public List<String>	list;
 

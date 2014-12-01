@@ -54,8 +54,7 @@ public final class JTest
 	/**
 	 * The {@link Logger} used by the application
 	 */
-	public static final Logger	logger					= Logger.getLogger(JTest.class
-			.getCanonicalName());
+	public static final Logger	logger					= Logger.getLogger(JTest.class.getCanonicalName());
 	
 	/**
 	 * The web address for the pull requests page
@@ -92,32 +91,22 @@ public final class JTest
 	/**
 	 * The "about" window
 	 */
-	private static AboutFrame	aboutWindow;
+	private static AboutFrame	aboutFrame;
 	
 	/**
 	 * The primary application window
 	 */
-	private static AppFrame		appWindow;
+	private static AppFrame		appFrame;
 
-	private static EndFrame endFrame;
+	private static EndFrame		endFrame;
 	
-	public static EndFrame endFrame()
-	{
-		return endFrame;
-	}
-	
-	private static Player player;
-	
-	public static Player player()
-	{
-		return player;
-	}
+	private static Player		player;
 	
 	/**
 	 * The local questions
 	 */
-	private static Questions	localQuestions;
-
+	private static Questions	questions;
+	
 	private static State		state;
 	
 	public static void changeState(final State state)
@@ -129,11 +118,10 @@ public final class JTest
 			JTest.logger.info("Game state is now " + JTest.state.toString());
 			return;
 		}
-		JTest.logger.info("Game state changing from " + JTest.state.toString()
-				+ " to " + state.toString());
+		JTest.logger.info("Game state changing from " + JTest.state.toString() + " to " + state.toString());
 		JTest.state = state;
 	}
-		
+
 	public static void cloneQuestions()
 	{
 		try
@@ -143,10 +131,8 @@ public final class JTest
 				new File(JTest.QUESTIONS_JSON_LOCAL).createNewFile();
 			}
 			final URL remote = new URL(JTest.QUESTIONS_JSON_REMOTE);
-			final ReadableByteChannel rbc = Channels.newChannel(remote
-					.openStream());
-			final FileOutputStream fos = new FileOutputStream(
-					JTest.QUESTIONS_JSON_LOCAL);
+			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
+			final FileOutputStream fos = new FileOutputStream(JTest.QUESTIONS_JSON_LOCAL);
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			fos.close();
 		}
@@ -169,8 +155,7 @@ public final class JTest
 	{
 		try
 		{
-			Files.copy(remote.toURL().openStream(), Paths.get(local),
-					StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(remote.toURL().openStream(), Paths.get(local), StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (final MalformedURLException e)
 		{
@@ -181,33 +166,28 @@ public final class JTest
 			e.printStackTrace();
 		}
 	}
+
+	public static EndFrame endFrame()
+	{
+		return JTest.endFrame;
+	}
 	
 	/**
-	 * @return the local questions
+	 *
 	 */
-	public static Questions getLocalQuestions()
+	public static void endGame()
 	{
-		if (JTest.localQuestions == null)
-		{
-			final String json = JTest.parseFileToString(new File(
-					JTest.QUESTIONS_JSON_LOCAL));
-			final Gson gson = new Gson();
-			final Questions newQ = gson.fromJson(json, Questions.class);
-			JTest.localQuestions = newQ;
-		}
-		return JTest.localQuestions;
+		// TODO
 	}
-
+	
 	public static File getLocalQuestionsFile()
 	{
 		return new File(JTest.QUESTIONS_JSON_LOCAL);
 	}
-	
-	public static <K, V> Map<K, V> getMapFromLists(final List<K> keyList,
-			final List<V> valueList)
-			{
-		if (keyList.size() != valueList.size()) { throw new IllegalArgumentException(
-				"Cannot combine lists of unequal sizes"); }
+
+	public static <K, V> Map<K, V> getMapFromLists(final List<K> keyList, final List<V> valueList)
+	{
+		if (keyList.size() != valueList.size()) { throw new IllegalArgumentException("Cannot combine lists of unequal sizes"); }
 		final int size = keyList.size();
 		final Map<K, V> map = new HashMap<K, V>();
 		for (int i = 0; i < size; i++)
@@ -215,21 +195,36 @@ public final class JTest
 			map.put(keyList.get(i), valueList.get(i));
 		}
 		return map;
-			}
+	}
 	
 	public static String getNewTitle()
 	{
-		// TODO load a splash from the JSON, then add it to the Title, so that
-// it looks like 'Title - SPLASH'
 		return JTest.TITLE + " - " + JTest.getRandomSplash();
+	}
+	
+	public static Player getPlayer()
+	{
+		return JTest.player;
+	}
+	
+	/**
+	 * @return the local questions
+	 */
+	public static Questions getQuestions()
+	{
+		if (JTest.questions == null)
+		{
+			final String json = JTest.parseFileToString(new File(JTest.QUESTIONS_JSON_LOCAL));
+			final Gson gson = new Gson();
+			final Questions newQ = gson.fromJson(json, Questions.class);
+			JTest.questions = newQ;
+		}
+		return JTest.questions;
 	}
 	
 	public static String getRandomSplash()
 	{
-		return new Gson().fromJson(
-				JTest.parseStreamToString(JTest.class
-						.getResourceAsStream("splash.json")), Splash.class)
-						.getRandomSplash();
+		return new Gson().fromJson(JTest.parseStreamToString(JTest.class.getResourceAsStream("splash.json")), Splash.class).getRandomSplash();
 	}
 	
 	/**
@@ -239,8 +234,7 @@ public final class JTest
 	{
 		try
 		{
-			final String json = JTest.parseURLtoString(new URL(
-					JTest.QUESTIONS_JSON_REMOTE));
+			final String json = JTest.parseURLtoString(new URL(JTest.QUESTIONS_JSON_REMOTE));
 			final Gson gson = new Gson();
 			return gson.fromJson(json, Questions.class);
 		}
@@ -250,12 +244,12 @@ public final class JTest
 		}
 		return JTest.getRemoteQuestions();
 	}
-	
+
 	public static State getState()
 	{
 		return JTest.state;
 	}
-
+	
 	/**
 	 * Displays an info box with the given title and message.
 	 *
@@ -266,8 +260,7 @@ public final class JTest
 	 */
 	public static void infoBox(final String infoMessage, final String titleBar)
 	{
-		JOptionPane.showMessageDialog(null, infoMessage, titleBar,
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	/**
@@ -305,9 +298,9 @@ public final class JTest
 				{
 					try
 					{
-						JTest.appWindow = new AppFrame();
-						JTest.aboutWindow = new AboutFrame();
-						JTest.appWindow.setVisible(true);
+						JTest.appFrame = new AppFrame();
+						JTest.aboutFrame = new AboutFrame();
+						JTest.appFrame.setVisible(true);
 					}
 					catch (final Exception e)
 					{
@@ -315,9 +308,11 @@ public final class JTest
 					}
 				}
 			});
+			JTest.logger.info("Creating a few objects...");
+			JTest.player = new Player();
 		}
 	}
-	
+
 	/**
 	 * Pings google.com to determine whether or not the internet is reachable.
 	 * If google is not reachable, then society has clearly collapsed, so this
@@ -331,8 +326,7 @@ public final class JTest
 		try
 		{
 			final URL url = new URL(JTest.GITHUB);
-			final HttpURLConnection urlConnect = (HttpURLConnection) url
-					.openConnection();
+			final HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
 			urlConnect.getContent();
 		}
 		catch (final UnknownHostException e)
@@ -358,35 +352,32 @@ public final class JTest
 	public static Questions loadQuestions()
 	{
 		final boolean connection = JTest.isInternetReachable();
-		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL)
-		.exists();
+		final boolean isLocalPresent = new File(JTest.QUESTIONS_JSON_LOCAL).exists();
 		if (!connection && !isLocalPresent)
 		{
-			JTest.infoBox(
-					"There are no local questions stored, and there is no internet connection.\nThe application must now close.",
-					"Error");
+			JTest.infoBox("There are no local questions stored, and there is no internet connection.\nThe application must now close.", "Error");
 			JTest.shutdown();
 			return null;
 		}
 		else if (!connection && isLocalPresent)
 		{
-			return JTest.getLocalQuestions();
+			return JTest.getQuestions();
 		}
 		else if (connection && !isLocalPresent)
 		{
 			JTest.cloneQuestions();
-			return JTest.getLocalQuestions();
+			return JTest.getQuestions();
 		}
 		else
 		{
 			if (JTest.shouldUpdateQuestions())
 			{
 				JTest.cloneQuestions();
-				return JTest.getLocalQuestions();
+				return JTest.getQuestions();
 			}
 			else
 			{
-				return JTest.getLocalQuestions();
+				return JTest.getQuestions();
 			}
 		}
 	}
@@ -399,7 +390,7 @@ public final class JTest
 		JTest.initialize();
 		JTest.start();
 	}
-
+	
 	/**
 	 * Opens a web page in the default browser
 	 *
@@ -494,15 +485,16 @@ public final class JTest
 		}
 		return universe;
 	}
-	
+
 	public static String parseStreamToString(final InputStream is)
 	{
-		@SuppressWarnings("resource")
-		// TODO rewrite this method to close the scanner
-		final Scanner s = new Scanner(is).useDelimiter("\\A");
-		return s.hasNext() ? s.next() : "";
+		final Scanner s = new Scanner(is);
+		s.useDelimiter("\\A");
+		final String value = s.hasNext() ? s.next() : "";
+		s.close();
+		return value;
 	}
-
+	
 	/**
 	 * Parses a remote url to a string
 	 *
@@ -538,9 +530,9 @@ public final class JTest
 	
 	public static void refreshPanes()
 	{
-		// TODO
+		JTest.appFrame.refresh();
 	}
-	
+
 	/**
 	 * Restart the current Java application
 	 *
@@ -561,8 +553,7 @@ public final class JTest
 		};
 		final String SUN_JAVA_COMMAND = "sun.java.command";
 		final String java = System.getProperty("java.home") + "/bin/java";
-		final List<String> vmArguments = ManagementFactory.getRuntimeMXBean()
-				.getInputArguments();
+		final List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
 		final StringBuffer vmArgsOneLine = new StringBuffer();
 		for (final String arg : vmArguments)
 		{
@@ -572,18 +563,15 @@ public final class JTest
 				vmArgsOneLine.append(" ");
 			}
 		}
-		final StringBuffer cmd = new StringBuffer("\"" + java + "\" "
-				+ vmArgsOneLine);
-		final String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND)
-				.split(" ");
+		final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + vmArgsOneLine);
+		final String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
 		if (mainCommand[0].endsWith(".jar"))
 		{
 			cmd.append("-jar " + new File(mainCommand[0]).getPath());
 		}
 		else
 		{
-			cmd.append("-cp \"" + System.getProperty("java.class.path") + "\" "
-					+ mainCommand[0]);
+			cmd.append("-cp \"" + System.getProperty("java.class.path") + "\" " + mainCommand[0]);
 		}
 		for (int i = 1; i < mainCommand.length; i++)
 		{
@@ -618,15 +606,14 @@ public final class JTest
 	public static void setLocalQuestions(final Questions localQuestions)
 	{
 		if (localQuestions == null) { return; }
-		JTest.localQuestions = localQuestions;
+		JTest.questions = localQuestions;
 	}
 
 	public static boolean shouldUpdateQuestions()
 	{
 		try
 		{
-			return JTest.getRemoteQuestions().getVersion() > JTest
-					.getLocalQuestions().getVersion();
+			return JTest.getRemoteQuestions().getVersion() > JTest.getQuestions().getVersion();
 		}
 		catch (final Exception e)
 		{
@@ -640,9 +627,9 @@ public final class JTest
 	 */
 	public static void showAboutWindow()
 	{
-		JTest.aboutWindow.setVisible(true);
+		JTest.aboutFrame.setVisible(true);
 	}
-
+	
 	/**
 	 * Shuffles an array, changing the order of the array, but leaving the
 	 * contents untouched
@@ -687,7 +674,7 @@ public final class JTest
 		}
 		return array;
 	}
-	
+
 	/**
 	 * Shutdown the application nicely
 	 */
@@ -696,15 +683,14 @@ public final class JTest
 		JTest.changeState(State.SHUTTING_DOWN);
 		System.exit(0);
 	}
-
+	
 	/**
 	 * Start the game
 	 */
 	public static void start()
 	{
 		JTest.changeState(State.RUNNING);
-		JTest.logger
-		.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
+		JTest.logger.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
 	}
 	
 	private JTest() throws Exception
