@@ -20,7 +20,7 @@ archivesBaseName = 'javatest'
 version = '0.1.1'
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
-mainClassName = "xyz.voxio.jtest.JTest"
+mainClassName = "xyz.voxio.jtest.Game"
 applicationDefaultJvmArgs = ["-Dgreeting.language=en"]
 applicationName = "JavaTest"
 

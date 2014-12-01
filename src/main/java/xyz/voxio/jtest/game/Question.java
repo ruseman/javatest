@@ -10,9 +10,9 @@ import java.util.List;
 public final class Question
 {
 	private List<String>	answers;
-
+	
 	private String			correctAnswer;
-
+	
 	public Question()
 	{
 		EventQueue.invokeLater(new Thread()
@@ -25,7 +25,7 @@ public final class Question
 			}
 		});
 	}
-
+	
 	public boolean correct(final Choice choice)
 	{
 		Integer ind = null;
@@ -46,7 +46,7 @@ public final class Question
 		}
 		return this.answers.get(ind).equals(this.correctAnswer);
 	}
-
+	
 	/**
 	 * @return the answers
 	 */
@@ -54,12 +54,12 @@ public final class Question
 	{
 		return this.answers;
 	}
-
+	
 	public String getCorrectAnswer()
 	{
 		return this.correctAnswer;
 	}
-	
+
 	public String getQuestionFormatted()
 	{
 		return ""; // TODO
