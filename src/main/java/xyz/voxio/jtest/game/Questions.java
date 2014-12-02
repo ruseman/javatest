@@ -1,7 +1,5 @@
 package xyz.voxio.jtest.game;
 
-import java.awt.EventQueue;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -9,31 +7,31 @@ import java.util.List;
  */
 public final class Questions
 {
-	public List<Question>		questions;
-
-	private int					currentQuestionIndex;
-
-	private int					version;
+	public List<Question>	questions;
 	
+	private int				currentQuestionIndex;
+	
+	private int				version;
+
 	/**
-	 * 
+	 *
 	 */
 	public Questions()
 	{
-//		EventQueue.invokeLater(new Thread()
-//		{
-//			@Override
-//			public void run()
-//			{
-//				Collections.shuffle(Questions.this.questions);
-//				for (final Question question : Questions.this.questions)
-//				{
-//					question.initialize();
-//				}
-//			}
-//		});
+// EventQueue.invokeLater(new Thread()
+// {
+// @Override
+// public void run()
+// {
+// Collections.shuffle(Questions.this.questions);
+// for (final Question question : Questions.this.questions)
+// {
+// question.initialize();
+// }
+// }
+// });
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -41,7 +39,7 @@ public final class Questions
 	{
 		return this.questions.get(this.currentQuestionIndex);
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -49,12 +47,12 @@ public final class Questions
 	{
 		return null;
 	}
-
+	
 	public List<Question> getQuestion()
 	{
 		return this.questions;
 	}
-
+	
 	/**
 	 * @return the version
 	 */
