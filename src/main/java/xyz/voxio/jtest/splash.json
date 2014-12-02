@@ -1,5 +1,6 @@
 {
-	"list":[
+	"list": 
+	[
 		"Outkast is still relevant",
 		"Are you feeling Shpongled",
 		"Bigger than Big Gigantic",
@@ -60,5 +61,22 @@
 		"Adam Corolla is not funny",
 		"CD-ROMantic",
 		"let her go"
+	],
+
+	"loseList": 
+	[
+		"It's all ogre now",
+		"It's all over",
+		"Game over man, game over"
+	],
+
+	"endList": 
+	[
+		"Thanks for playing",
+		"Congratulations",
+		"Thank you, come again!",
+		"A winner is you",
+		"A winrar is you",
+		"We have our winrar"
 	]
 }

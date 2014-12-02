@@ -1,6 +1,7 @@
 package xyz.voxio.jtest.game;
 
 import xyz.voxio.jtest.Game;
+import xyz.voxio.jtest.Reason;
 
 public class Player
 {
@@ -24,8 +25,10 @@ public class Player
 		}
 		if (this.score <= 0)
 		{
-			Game.instance().endGame();
+			this.score = 0;
+			Game.instance().endGame(Reason.OUT_OF_POINTS);
 		}
+		Game.instance().getQuestions().nextQuestion();
 	}
 	
 	public void correctAnswer()

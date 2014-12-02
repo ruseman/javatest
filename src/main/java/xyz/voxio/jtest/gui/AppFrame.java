@@ -62,8 +62,7 @@ public final class AppFrame extends JFrame
 			@Override
 			public void mousePressed(final MouseEvent e)
 			{
-				Game.instance();
-				Game.restartApplication();
+				Game.instance().restartApplication();
 			}
 		});
 		mnFile.add(mntmRefreshApplication);
@@ -202,19 +201,6 @@ public final class AppFrame extends JFrame
 		this.questionPane.setEditable(false);
 		this.questionPane.setBounds(15, 37, 467, 257);
 		this.contentPane.add(this.questionPane);
-		
-		final JButton btnRun = new JButton("Run");
-		btnRun.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mousePressed(final MouseEvent e)
-			{
-				Game.instance().getPlayer().run();
-				AppFrame.this.repaint();
-			}
-		});
-		btnRun.setBounds(382, 370, 100, 45);
-		this.contentPane.add(btnRun);
 
 		this.scorePane = new JTextPane();
 		this.scorePane.setFont(new Font("Arial Black", (this.scorePane

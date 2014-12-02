@@ -3,20 +3,27 @@ package xyz.voxio.jtest.game;
 import java.util.Collections;
 import java.util.List;
 
+import xyz.voxio.jtest.Game;
+
 /**
  * @author Tim Miller
  */
 public final class Question
 {
-	private List<String>	answers;
+	private static int		count;
 
-	private String			correct;
+	private List<String>	answers;
 	
+	private String			correct;
+
+	private final int		id;
+
 	private String			prompt;
 	
 	public Question()
 	{
-		
+		this.id = Question.count;
+		Question.count++;
 	}
 
 	public boolean correct(final Choice choice)
@@ -48,14 +55,10 @@ public final class Question
 				+ this.answers.get(1) + "\nC: " + this.answers.get(2) + "\nD: "
 				+ this.answers.get(3);
 	}
-
-	public void shuffle()
-	{
-		
-	}
 	
 	void initialize()
 	{
+		Game.LOGGER.info("Question:" + this.id + " is being initialized");
 		this.correct = this.answers.get(0);
 		Collections.shuffle(this.answers);
 	}
