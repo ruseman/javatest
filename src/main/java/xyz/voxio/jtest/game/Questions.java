@@ -13,11 +13,11 @@ import xyz.voxio.jtest.Reason;
 public final class Questions
 {
 	public List<Question>	questions;
-	
+
 	private int				index	= 0;
-
+	
 	private int				version;
-
+	
 	public Questions()
 	{
 		EventQueue.invokeLater(new Thread()
@@ -33,7 +33,7 @@ public final class Questions
 			}
 		});
 	}
-
+	
 	public Question getCurrentQuestion()
 	{
 		try
@@ -47,17 +47,17 @@ public final class Questions
 			return this.getCurrentQuestion();
 		}
 	}
-	
+
 	public List<Question> getQuestion()
 	{
 		return this.questions;
 	}
-	
+
 	public int getVersion()
 	{
 		return this.version;
 	}
-	
+
 	public void nextQuestion()
 	{
 		this.index++;

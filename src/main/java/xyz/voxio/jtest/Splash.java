@@ -15,23 +15,23 @@ public final class Splash
 				Util.parseStreamToString(Splash.class
 						.getResourceAsStream("splash.json")), Splash.class);
 	}
-
+	
 	private List<String>	endList;
-
+	
 	private List<String>	list;
-	
+
 	private List<String>	loseList;
-	
+
 	public String getRandomEndSplash()
 	{
 		return this.endList.get(new Random().nextInt(this.endList.size()));
 	}
-	
+
 	public String getRandomLoseSplash()
 	{
 		return this.loseList.get(new Random().nextInt(this.loseList.size()));
 	}
-	
+
 	public String getRandomSplash()
 	{
 		return this.list.get(new Random().nextInt(this.list.size()));
