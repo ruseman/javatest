@@ -333,12 +333,6 @@ public final class Game
 		}
 	}
 	
-	/**
-	 * Restart the current Java application
-	 *
-	 * @param runBeforeRestart
-	 *            some custom code to be run before restarting
-	 */
 	public void restartApplication()
 	{
 		final String SUN_JAVA_COMMAND = "sun.java.command";
