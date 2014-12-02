@@ -18,9 +18,6 @@ public final class Questions
 
 	private int				version;
 
-	/**
-	 *
-	 */
 	public Questions()
 	{
 		EventQueue.invokeLater(new Thread()
@@ -37,9 +34,6 @@ public final class Questions
 		});
 	}
 
-	/**
-	 * @return
-	 */
 	public Question getCurrentQuestion()
 	{
 		try
@@ -59,9 +53,6 @@ public final class Questions
 		return this.questions;
 	}
 	
-	/**
-	 * @return the version
-	 */
 	public int getVersion()
 	{
 		return this.version;
