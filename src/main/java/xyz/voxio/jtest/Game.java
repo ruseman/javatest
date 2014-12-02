@@ -338,7 +338,6 @@ public final class Game
 	 *
 	 * @param runBeforeRestart
 	 *            some custom code to be run before restarting
-	 * @throws IOException
 	 */
 	public void restartApplication()
 	{
