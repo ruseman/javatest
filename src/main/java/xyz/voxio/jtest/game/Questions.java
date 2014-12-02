@@ -9,34 +9,29 @@ import java.util.List;
  */
 public final class Questions
 {
-	private static final String	SHUFFLE_THREAD_DEFAULT_NAME	= "shuffleThread";
-
 	public List<Question>		questions;
 
 	private int					currentQuestionIndex;
 
 	private int					version;
 	
+	/**
+	 * 
+	 */
 	public Questions()
 	{
-		EventQueue.invokeLater(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				Collections.shuffle(Questions.this.questions);
-				for (final Question question : Questions.this.questions)
-				{
-					question.initialize();
-				}
-			}
-
-			@Override
-			public void start()
-			{
-				this.setName(Questions.SHUFFLE_THREAD_DEFAULT_NAME);
-			}
-		});
+//		EventQueue.invokeLater(new Thread()
+//		{
+//			@Override
+//			public void run()
+//			{
+//				Collections.shuffle(Questions.this.questions);
+//				for (final Question question : Questions.this.questions)
+//				{
+//					question.initialize();
+//				}
+//			}
+//		});
 	}
 	
 	/**
