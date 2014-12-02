@@ -399,11 +399,6 @@ public final class Game
 			}
 		}
 	}
-	
-	public void refreshPanes()
-	{
-		this.appFrame.refresh();
-	}
 
 	/**
 	 * @param localQuestions

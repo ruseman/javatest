@@ -1,6 +1,5 @@
 package xyz.voxio.jtest.game;
 
-import java.awt.EventQueue;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,40 +10,18 @@ public final class Question
 {
 	private List<String>	answers;
 	
-	private String			correctAnswer;
-	
+	private String			correct;
+
+	private String			prompt;
+
 	public Question()
 	{
-		EventQueue.invokeLater(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				Question.this.correctAnswer = Question.this.answers.get(0);
-				Collections.shuffle(Question.this.answers);
-			}
-		});
+
 	}
 	
 	public boolean correct(final Choice choice)
 	{
-		Integer ind = null;
-		switch (choice)
-		{
-			case A:
-				ind = 0;
-				break;
-			case B:
-				ind = 1;
-				break;
-			case C:
-				ind = 2;
-				break;
-			case D:
-				ind = 3;
-				break;
-		}
-		return this.answers.get(ind).equals(this.correctAnswer);
+		return this.correct.equals(answers.get(choice.toIndex()));
 	}
 	
 	/**
@@ -57,11 +34,29 @@ public final class Question
 	
 	public String getCorrectAnswer()
 	{
-		return this.correctAnswer;
+		return this.correct;
 	}
-
+	
+	public String getPrompt()
+	{
+		return this.prompt;
+	}
+	
 	public String getQuestionFormatted()
 	{
-		return ""; // TODO
+		return this.prompt + "\n\nA: " + this.answers.get(0) + "\nB: "
+				+ this.answers.get(1) + "\nC: " + this.answers.get(2) + "\nD: "
+				+ this.answers.get(3);
+	}
+	
+	public void shuffle()
+	{
+
+	}
+
+	void initialize()
+	{
+		this.correct = this.answers.get(0);
+		Collections.shuffle(this.answers);
 	}
 }

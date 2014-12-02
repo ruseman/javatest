@@ -10,13 +10,13 @@ import java.util.List;
 public final class Questions
 {
 	private static final String	SHUFFLE_THREAD_DEFAULT_NAME	= "shuffleThread";
-	
-	private int					currentQuestionIndex;
-	
-	private List<Question>		questions;
-	
-	private int					version;
 
+	public List<Question>		questions;
+
+	private int					currentQuestionIndex;
+
+	private int					version;
+	
 	public Questions()
 	{
 		EventQueue.invokeLater(new Thread()
@@ -25,8 +25,12 @@ public final class Questions
 			public void run()
 			{
 				Collections.shuffle(Questions.this.questions);
+				for (final Question question : Questions.this.questions)
+				{
+					question.initialize();
+				}
 			}
-			
+
 			@Override
 			public void start()
 			{
@@ -34,7 +38,7 @@ public final class Questions
 			}
 		});
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -42,7 +46,7 @@ public final class Questions
 	{
 		return this.questions.get(this.currentQuestionIndex);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -50,12 +54,12 @@ public final class Questions
 	{
 		return null;
 	}
-	
+
 	public List<Question> getQuestion()
 	{
 		return this.questions;
 	}
-	
+
 	/**
 	 * @return the version
 	 */
