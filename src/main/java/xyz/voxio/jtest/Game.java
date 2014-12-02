@@ -252,6 +252,7 @@ public final class Game
 			public void uncaughtException(final Thread t, final Throwable e)
 			{
 				e.printStackTrace();
+				Game.instance().restartApplication();
 			}
 		});
 		Game.LOGGER.info("Questions have been loaded");
@@ -341,14 +342,6 @@ public final class Game
 	 */
 	public void restartApplication()
 	{
-		final Runnable runBeforeRestart = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				
-			}
-		};
 		final String SUN_JAVA_COMMAND = "sun.java.command";
 		final String java = System.getProperty("java.home") + "/bin/java";
 		final List<String> vmArguments = ManagementFactory.getRuntimeMXBean()
@@ -395,10 +388,6 @@ public final class Game
 				}
 			}
 		});
-		if (runBeforeRestart != null)
-		{
-			runBeforeRestart.run();
-		}
 		System.exit(0);
 	}
 
