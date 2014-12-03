@@ -4,12 +4,34 @@ import xyz.voxio.jtest.Game;
 import xyz.voxio.jtest.Game.Reason;
 import xyz.voxio.jtest.game.Question.Choice;
 
-public class Player
+/**
+ * The class for the player object. The class holds the player's score, as well
+ * as the choose(Question, Choice) method, and all related methods.
+ * This could've/should've been done as a singleton. I don't feel bad
+ *
+ * @author Tim Miller
+ */
+public final class Player
 {
+	/**
+	 * The starting score
+	 */
 	public static final int	STARTING_SCORE	= 10;
-	
+
+	/**
+	 * The score
+	 */
 	private int				score			= Player.STARTING_SCORE;
-	
+
+	/**
+	 * Determines whether or not the choice was correct, and performs the
+	 * appropriate actions
+	 *
+	 * @param question
+	 *            the question
+	 * @param choice
+	 *            the choice
+	 */
 	public void choose(final Question question, final Choice choice)
 	{
 		Game.LOGGER.info("Choice:" + choice.toString() + " chosen");
@@ -31,12 +53,15 @@ public class Player
 		}
 		Game.instance().getQuestions().nextQuestion();
 	}
-	
+
+	/**
+	 * Increments the score by 1
+	 */
 	public void correctAnswer()
 	{
 		this.score++;
 	}
-	
+
 	/**
 	 * @return the score
 	 */
@@ -44,12 +69,18 @@ public class Player
 	{
 		return this.score;
 	}
-	
+
+	/**
+	 * Part of the unfinished RUN feature
+	 */
 	public void run()
 	{
 		Game.LOGGER.info("RUN selected");
 	}
-	
+
+	/**
+	 * Decrements the score
+	 */
 	private void incorrectAnswer()
 	{
 		this.score--;

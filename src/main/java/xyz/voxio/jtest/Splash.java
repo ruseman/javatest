@@ -7,20 +7,33 @@ import com.google.gson.Gson;
 
 import xyz.voxio.lib.Util;
 
+/**
+ * This class is instantiated from the JSON splash text file, and used only to
+ * get a random splash text for the end screen and title bar
+ *
+ * @author Tim Miller
+ */
 public final class Splash
 {
+	/**
+	 * This is the factory method for the class. It generates the object from
+	 * the JSON file using the GSON reader
+	 */
 	public static Splash getSplash()
 	{
 		return new Gson().fromJson(Util.parseStreamToString(Splash.class
 				.getResourceAsStream("splash.json")), Splash.class);
 	}
-
+	
 	private List<String>	endList;
-
+	
 	private List<String>	list;
-	
+
 	private List<String>	loseList;
-	
+
+	/**
+	 * @return a splash string used in the end screen if the player won
+	 */
 	public String getRandomEndSplash()
 	{
 		try
@@ -32,7 +45,10 @@ public final class Splash
 			return "Thanks for playing";
 		}
 	}
-	
+
+	/**
+	 * @return a splash string used in the end screen if the player lost
+	 */
 	public String getRandomLoseSplash()
 	{
 		try
@@ -45,7 +61,10 @@ public final class Splash
 			return "Game over man, game over";
 		}
 	}
-	
+
+	/**
+	 * @return a splash string used in the title bar
+	 */
 	public String getRandomSplash()
 	{
 		try
