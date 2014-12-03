@@ -18,7 +18,7 @@ dependencies {
 
 group = "xyz.voxio"
 archivesBaseName = 'javatest'
-version = '1.0.0'
+version = '1.0.1'
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 mainClassName = "xyz.voxio.jtest.Game"

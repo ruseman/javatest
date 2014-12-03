@@ -145,20 +145,22 @@ public final class Game
 	 */
 	private AppFrame	appFrame;
 
+	private EndFrame	endFrame;
+
 	private Player		player;
 
 	/**
 	 * The local questions
 	 */
 	private Questions	questions;
-	
+
 	private State		state;
 	
 	private Game()
 	{
 
 	}
-
+	
 	public void changeState(final State state)
 	{
 		if ((state == null) || (state == this.state)) { return; }
@@ -208,6 +210,11 @@ public final class Game
 		frame.setVisible(true);
 	}
 
+	public EndFrame getEndFrame()
+	{
+		return this.endFrame;
+	}
+
 	public Player getPlayer()
 	{
 		return this.player;
@@ -218,14 +225,12 @@ public final class Game
 	 */
 	public Questions getQuestions()
 	{
-		if (this.questions == null)
-		{
-			final String json = Util.parseFileToString(new File(Game.QUESTIONS_JSON_LOCAL));
-			final Gson gson = new Gson();
-			final Questions newQ = gson.fromJson(json, Questions.class);
-			this.questions = newQ;
-		}
-		return this.questions;
+		if (this.questions != null) { return this.questions; }
+		final String json = Util.parseFileToString(new File(Game.QUESTIONS_JSON_LOCAL));
+		final Gson gson = new Gson();
+		final Questions newQ = gson.fromJson(json, Questions.class);
+		this.questions = newQ;
+		return this.getQuestions();
 	}
 
 	public State getState()
@@ -239,62 +244,14 @@ public final class Game
 	public void initialize()
 	{
 		this.changeState(State.INITIALIZING);
-		{
-			Game.LOGGER.info("Dirs being mkd");
-			final File tempDir = new File(Game.TEMP);
-			tempDir.mkdir();
-			tempDir.deleteOnExit();
-		}
 		Game.LOGGER.info("Loading the questions");
-		this.setLocalQuestions(this.loadQuestions());
-		Game.LOGGER.info("Registering the global event handler");
-		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
-		{
-			@Override
-			public void uncaughtException(final Thread t, final Throwable e)
-			{
-				e.printStackTrace();
-				if (Game.this.state == State.INITIALIZING)
-				{
-					Game.LOGGER.info("Restarting due to an error...");
-					Game.instance().restartApplication();
-				}
-			}
-		});
+		this.loadQuestions();
 		Game.LOGGER.info("Questions have been loaded");
-		{
-			Game.LOGGER.info("Registering shutdown hook");
-			Runtime.getRuntime().addShutdownHook(new Thread()
-			{
-				@Override
-				public void run()
-				{
-					Game.this.changeState(xyz.voxio.jtest.Game.State.SHUTTING_DOWN);
-				}
-			});
-		}
-		{
-			Game.LOGGER.info("Invoking later...");
-			EventQueue.invokeLater(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					try
-					{
-						Game.this.appFrame = new AppFrame();
-						Game.this.aboutFrame = new AboutFrame();
-						Game.this.appFrame.setVisible(true);
-					}
-					catch (final Exception e)
-					{
-						e.printStackTrace();
-					}
-				}
-			});
-			Game.LOGGER.info("Creating a few objects...");
-			this.player = new Player();
-		}
+		this.registerHooks();
+
+		Game.LOGGER.info("Creating a few objects...");
+		this.player = new Player();
+		new File("questions.json").deleteOnExit();
 	}
 	
 	/**
@@ -306,33 +263,16 @@ public final class Game
 	public Questions loadQuestions()
 	{
 		final boolean connection = Util.isInternetReachable();
-		final boolean isLocalPresent = new File(Game.QUESTIONS_JSON_LOCAL).exists();
-		if (!connection && !isLocalPresent)
-		{
-			Util.infoBox("There are no local questions stored, and there is no internet connection.\nThe application must now close.", "Error");
-			this.shutdown();
-			return null;
-		}
-		else if (!connection && isLocalPresent)
-		{
-			return this.getQuestions();
-		}
-		else if (connection && !isLocalPresent)
+		if (connection)
 		{
 			this.cloneQuestions();
 			return this.getQuestions();
 		}
 		else
 		{
-			if (this.shouldUpdateQuestions())
-			{
-				this.cloneQuestions();
-				return this.getQuestions();
-			}
-			else
-			{
-				return this.getQuestions();
-			}
+			Util.infoBox("There is no internet connection.\nThe application must now close.", "Error");
+			this.shutdown();
+			return null;
 		}
 	}
 	
@@ -382,16 +322,7 @@ public final class Game
 		});
 		System.exit(0);
 	}
-
-	/**
-	 * @param localQuestions
-	 */
-	public void setLocalQuestions(final Questions localQuestions)
-	{
-		if (localQuestions == null) { return; }
-		this.questions = localQuestions;
-	}
-
+	
 	public boolean shouldUpdateQuestions()
 	{
 		try
@@ -404,7 +335,7 @@ public final class Game
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Show the about window
 	 */
@@ -421,13 +352,72 @@ public final class Game
 		this.changeState(State.SHUTTING_DOWN);
 		System.exit(0);
 	}
-
+	
 	/**
 	 * Start the game
 	 */
 	public void start()
 	{
-		this.changeState(State.RUNNING);
-		Game.LOGGER.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
+		EventQueue.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				Game.this.changeState(State.RUNNING);
+				Game.LOGGER.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
+			}
+		});
+	}
+
+	private void createFrames()
+	{
+		this.appFrame = new AppFrame();
+		this.endFrame = new EndFrame();
+		this.aboutFrame = new AboutFrame();
+	}
+
+	private void registerHooks()
+	{
+		Game.LOGGER.info("Registering hooks and handlers");
+		Game.LOGGER.info("Registering the global event handler");
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
+		{
+			@Override
+			public void uncaughtException(final Thread t, final Throwable e)
+			{
+				e.printStackTrace();
+				if (Game.this.state == State.INITIALIZING)
+				{
+					Game.LOGGER.info("Restarting due to an error...");
+					Game.instance().restartApplication();
+				}
+			}
+		});
+		Game.LOGGER.info("Registering shutdown hook");
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			@Override
+			public void run()
+			{
+				Game.this.changeState(xyz.voxio.jtest.Game.State.SHUTTING_DOWN);
+			}
+		});
+		EventQueue.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					Game.this.createFrames();
+					Game.this.appFrame.setVisible(true);
+				}
+				catch (final Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 }

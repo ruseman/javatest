@@ -22,7 +22,7 @@ public class EndFrame extends JFrame
 	 *
 	 */
 	private static final long	serialVersionUID	= 5487569515468347037L;
-
+	
 	public static EndFrame getNewInstance(final String endMessage)
 	{
 		final EndFrame frame = new EndFrame();
@@ -30,11 +30,11 @@ public class EndFrame extends JFrame
 		frame.setTitle("Thanks for playing");
 		return frame;
 	}
-	
+
 	private final JPanel	contentPane;
-	
+
 	private final JTextPane	textPane;
-	
+
 	/**
 	 * Create the frame.
 	 */
@@ -47,7 +47,7 @@ public class EndFrame extends JFrame
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(this.contentPane);
 		this.contentPane.setLayout(null);
-
+		
 		this.textPane = new JTextPane();
 		this.textPane.setEditable(false);
 		this.textPane.setBounds(5, 5, 432, 222);
@@ -57,7 +57,7 @@ public class EndFrame extends JFrame
 		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
 		doc.setParagraphAttributes(0, doc.getLength(), center, false);
 		this.contentPane.add(this.textPane);
-
+		
 		final JButton endGameButton = new JButton("End");
 		endGameButton.addMouseListener(new MouseAdapter()
 		{
@@ -69,7 +69,7 @@ public class EndFrame extends JFrame
 		});
 		endGameButton.setBounds(5, 238, 89, 23);
 		this.contentPane.add(endGameButton);
-
+		
 		final JButton playAgainButton = new JButton("Play Again");
 		playAgainButton.addMouseListener(new MouseAdapter()
 		{
@@ -82,23 +82,23 @@ public class EndFrame extends JFrame
 		playAgainButton.setBounds(345, 238, 89, 23);
 		this.contentPane.add(playAgainButton);
 	}
-	
+
 	public String getTextPaneText()
 	{
 		return this.textPane.getText();
 	}
-	
+
 	@Override
 	public String getTitle()
 	{
 		return super.getTitle();
 	}
-	
+
 	public void setTextPaneText(final String text)
 	{
 		this.textPane.setText(text);
 	}
-	
+
 	@Override
 	public void setTitle(final String title)
 	{

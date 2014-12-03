@@ -13,25 +13,46 @@ public final class Splash
 	{
 		return new Gson().fromJson(Util.parseStreamToString(Splash.class.getResourceAsStream("splash.json")), Splash.class);
 	}
-
+	
 	private List<String>	endList;
-
+	
 	private List<String>	list;
-	
+
 	private List<String>	loseList;
-	
+
 	public String getRandomEndSplash()
 	{
-		return this.endList.get(new Random().nextInt(this.endList.size()));
+		try
+		{
+			return this.endList.get(new Random().nextInt(this.endList.size()));
+		}
+		catch (final NullPointerException e)
+		{
+			return "Thanks for playing";
+		}
 	}
-	
+
 	public String getRandomLoseSplash()
 	{
-		return this.loseList.get(new Random().nextInt(this.loseList.size()));
+		try
+		{
+			return this.loseList.get(new Random().nextInt(this.loseList.size()));
+		}
+		catch (final NullPointerException e)
+		{
+			return "Game over man, game over";
+		}
 	}
-	
+
 	public String getRandomSplash()
 	{
-		return this.list.get(new Random().nextInt(this.list.size()));
+		try
+		{
+			return this.list.get(new Random().nextInt(this.list.size()));
+		}
+		catch (final NullPointerException e)
+		{
+			return "I'm tired of writing splashes";
+		}
 	}
 }

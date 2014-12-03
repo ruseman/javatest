@@ -13,11 +13,11 @@ import xyz.voxio.jtest.Game.Reason;
 public final class Questions
 {
 	public List<Question>	questions;
-	
+
 	private int				index	= 0;
-
+	
 	private int				version;
-
+	
 	public Questions()
 	{
 		EventQueue.invokeLater(new Thread()
@@ -25,27 +25,24 @@ public final class Questions
 			@Override
 			public void run()
 			{
-				try
+				if (Questions.this.questions == null)
 				{
-					for (final Question question : Questions.this.questions)
-					{
-						question.initialize();
-					}
+					
 				}
-				catch (final NullPointerException e)
+				for (final Question question : Questions.this.questions)
 				{
-
+					question.initialize();
 				}
 				Collections.shuffle(Questions.this.questions);
 			}
 		});
 	}
-	
+
 	public int getCurrentNum()
 	{
 		return this.index + 1;
 	}
-
+	
 	public Question getCurrentQuestion()
 	{
 		try
@@ -59,22 +56,22 @@ public final class Questions
 			return this.getCurrentQuestion();
 		}
 	}
-
+	
 	public List<Question> getQuestion()
 	{
 		return this.questions;
 	}
-	
+
 	public int getTotalNum()
 	{
 		return this.questions.size();
 	}
-	
+
 	public int getVersion()
 	{
 		return this.version;
 	}
-	
+
 	public void nextQuestion()
 	{
 		this.index++;
