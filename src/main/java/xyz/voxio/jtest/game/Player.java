@@ -6,9 +6,9 @@ import xyz.voxio.jtest.Game.Reason;
 public class Player
 {
 	public static final int	STARTING_SCORE	= 10;
-
+	
 	private int				score			= Player.STARTING_SCORE;
-
+	
 	public void choose(final Question question, final Choice choice)
 	{
 		Game.LOGGER.info("Choice:" + choice.toString() + " chosen");
@@ -30,12 +30,12 @@ public class Player
 		}
 		Game.instance().getQuestions().nextQuestion();
 	}
-
+	
 	public void correctAnswer()
 	{
 		this.score++;
 	}
-
+	
 	/**
 	 * @return the score
 	 */
@@ -43,12 +43,12 @@ public class Player
 	{
 		return this.score;
 	}
-
+	
 	public void run()
 	{
 		Game.LOGGER.info("RUN selected");
 	}
-
+	
 	private void incorrectAnswer()
 	{
 		this.score--;

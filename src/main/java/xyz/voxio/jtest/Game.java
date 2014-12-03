@@ -3,13 +3,10 @@ package xyz.voxio.jtest;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
@@ -27,62 +24,62 @@ public final class Game
 	{
 		NO_MORE_QUESTIONS, OUT_OF_POINTS;
 	}
-
+	
 	public static enum State
 	{
 		INITIALIZING, RUNNING, SHUTTING_DOWN;
 	}
-
+	
 	/**
 	 * The web address for the issue tracker
 	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
-
+	
 	/**
 	 * The {@link Logger} used by the application
 	 */
 	public static final Logger	LOGGER					= Logger.getLogger(Game.class.getCanonicalName());
-
+	
 	/**
 	 * The web address for the pull requests page
 	 */
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
-
+	
 	/**
 	 * The path to the local questions json file
 	 */
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
-
+	
 	/**
 	 * The web address for the remote questions json file
 	 */
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
-
+	
 	/**
 	 * The repository for the questions
 	 */
 	public static final String	QUESTIONS_REPO			= "https://github.com/Commador/JavaTestQuestions";
-
+	
 	/**
 	 * The project repo
 	 */
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
-	
+
 	/**
 	 * The temporary directory path, and I can't remember what I wanted to do
 	 */
 	public static final String	TEMP					= ".jtest_temp/";
-
+	
 	/**
 	 * The title of the application
 	 */
 	public static final String	TITLE					= "JTest";
-
+	
 	/**
 	 * The instance of the game
 	 */
 	private static Game			instance;
-	
+
 	/**
 	 * @return a new instance of the local questions file
 	 */
@@ -90,7 +87,7 @@ public final class Game
 	{
 		return new File(Game.QUESTIONS_JSON_LOCAL);
 	}
-	
+
 	/**
 	 * @return a new title, formatted, with a random splash appended to the end
 	 */
@@ -98,7 +95,7 @@ public final class Game
 	{
 		return Game.TITLE + " - " + Splash.getSplash().getRandomSplash();
 	}
-
+	
 	/**
 	 * @return the remote questions
 	 */
@@ -116,7 +113,7 @@ public final class Game
 		}
 		return Game.getRemoteQuestions();
 	}
-	
+
 	public static Game instance()
 	{
 		if (Game.instance == null)
@@ -125,7 +122,7 @@ public final class Game
 		}
 		return Game.instance;
 	}
-
+	
 	/**
 	 * Launches the application
 	 */
@@ -134,33 +131,33 @@ public final class Game
 		Game.instance().initialize();
 		Game.instance().start();
 	}
-
+	
 	/**
 	 * The "about" window
 	 */
 	private AboutFrame	aboutFrame;
-	
+
 	/**
 	 * The primary application window
 	 */
 	private AppFrame	appFrame;
-
+	
 	private EndFrame	endFrame;
-
+	
 	private Player		player;
-
+	
 	/**
 	 * The local questions
 	 */
 	private Questions	questions;
-
-	private State		state;
 	
+	private State		state;
+
 	private Game()
 	{
-
+		
 	}
-	
+
 	public void changeState(final State state)
 	{
 		if ((state == null) || (state == this.state)) { return; }
@@ -173,7 +170,7 @@ public final class Game
 		Game.LOGGER.info("Game state changing from " + this.state.toString() + " to " + state.toString());
 		this.state = state;
 	}
-
+	
 	public void cloneQuestions()
 	{
 		try
@@ -193,7 +190,7 @@ public final class Game
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void endGame(final Reason reason)
 	{
 		String endMessage = "";
@@ -209,17 +206,17 @@ public final class Game
 		final EndFrame frame = EndFrame.getNewInstance(endMessage);
 		frame.setVisible(true);
 	}
-
+	
 	public EndFrame getEndFrame()
 	{
 		return this.endFrame;
 	}
-
+	
 	public Player getPlayer()
 	{
 		return this.player;
 	}
-
+	
 	/**
 	 * @return the local questions
 	 */
@@ -232,12 +229,12 @@ public final class Game
 		this.questions = newQ;
 		return this.getQuestions();
 	}
-
+	
 	public State getState()
 	{
 		return this.state;
 	}
-	
+
 	/**
 	 * Initializes the application, creating the necessary objects
 	 */
@@ -248,12 +245,12 @@ public final class Game
 		this.loadQuestions();
 		Game.LOGGER.info("Questions have been loaded");
 		this.registerHooks();
-
+		
 		Game.LOGGER.info("Creating a few objects...");
 		this.player = new Player();
 		new File("questions.json").deleteOnExit();
 	}
-	
+
 	/**
 	 * Determines whether or not the questions need to be updated, updates them,
 	 * and then loads them as an instance of {@link Questions}
@@ -275,54 +272,12 @@ public final class Game
 			return null;
 		}
 	}
-	
+
 	public void restartApplication()
 	{
-		final String SUN_JAVA_COMMAND = "sun.java.command";
-		final String java = System.getProperty("java.home") + "/bin/java";
-		final List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-		final StringBuffer vmArgsOneLine = new StringBuffer();
-		for (final String arg : vmArguments)
-		{
-			if (!arg.contains("-agentlib"))
-			{
-				vmArgsOneLine.append(arg);
-				vmArgsOneLine.append(" ");
-			}
-		}
-		final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + vmArgsOneLine);
-		final String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
-		if (mainCommand[0].endsWith(".jar"))
-		{
-			cmd.append("-jar " + new File(mainCommand[0]).getPath());
-		}
-		else
-		{
-			cmd.append("-cp \"" + System.getProperty("java.class.path") + "\" " + mainCommand[0]);
-		}
-		for (int i = 1; i < mainCommand.length; i++)
-		{
-			cmd.append(" ");
-			cmd.append(mainCommand[i]);
-		}
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					Runtime.getRuntime().exec(cmd.toString());
-				}
-				catch (final IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-		System.exit(0);
+		Util.infoBox("The restart functionality is not fully functional\nThank you for your patience", "This is embarassing");
 	}
-	
+
 	public boolean shouldUpdateQuestions()
 	{
 		try
@@ -335,7 +290,7 @@ public final class Game
 			return true;
 		}
 	}
-
+	
 	/**
 	 * Show the about window
 	 */
@@ -343,7 +298,7 @@ public final class Game
 	{
 		this.aboutFrame.setVisible(true);
 	}
-
+	
 	/**
 	 * Shutdown the application nicely
 	 */
@@ -352,7 +307,7 @@ public final class Game
 		this.changeState(State.SHUTTING_DOWN);
 		System.exit(0);
 	}
-	
+
 	/**
 	 * Start the game
 	 */
@@ -368,14 +323,14 @@ public final class Game
 			}
 		});
 	}
-
+	
 	private void createFrames()
 	{
 		this.appFrame = new AppFrame();
 		this.endFrame = new EndFrame();
 		this.aboutFrame = new AboutFrame();
 	}
-
+	
 	private void registerHooks()
 	{
 		Game.LOGGER.info("Registering hooks and handlers");
@@ -418,6 +373,6 @@ public final class Game
 				}
 			}
 		});
-
+		
 	}
 }

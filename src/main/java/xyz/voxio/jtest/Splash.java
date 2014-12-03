@@ -13,13 +13,13 @@ public final class Splash
 	{
 		return new Gson().fromJson(Util.parseStreamToString(Splash.class.getResourceAsStream("splash.json")), Splash.class);
 	}
-	
+
 	private List<String>	endList;
-	
+
 	private List<String>	list;
-
+	
 	private List<String>	loseList;
-
+	
 	public String getRandomEndSplash()
 	{
 		try
@@ -31,7 +31,7 @@ public final class Splash
 			return "Thanks for playing";
 		}
 	}
-
+	
 	public String getRandomLoseSplash()
 	{
 		try
@@ -43,7 +43,7 @@ public final class Splash
 			return "Game over man, game over";
 		}
 	}
-
+	
 	public String getRandomSplash()
 	{
 		try
