@@ -19,7 +19,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import xyz.voxio.jtest.Game;
-import xyz.voxio.jtest.game.Choice;
+import xyz.voxio.jtest.game.Question.Choice;
 import xyz.voxio.lib.Util;
 
 public final class AppFrame extends JFrame

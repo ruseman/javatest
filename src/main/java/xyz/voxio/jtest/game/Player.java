@@ -2,6 +2,7 @@ package xyz.voxio.jtest.game;
 
 import xyz.voxio.jtest.Game;
 import xyz.voxio.jtest.Game.Reason;
+import xyz.voxio.jtest.game.Question.Choice;
 
 public class Player
 {
