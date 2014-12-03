@@ -48,6 +48,15 @@ jar {
 	}
 }
 
+fatJar{
+    classifier = 'exec'
+    manifest {
+    attributes 'Main-Class': project.mainClassName
+	}
+}
+
+
+
 artifacts{
 	archives sourceJar
 	archives javadocJar
