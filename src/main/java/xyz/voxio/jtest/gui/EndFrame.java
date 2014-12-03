@@ -51,7 +51,8 @@ public class EndFrame extends JFrame
 		this.textPane = new JTextPane();
 		this.textPane.setEditable(false);
 		this.textPane.setBounds(5, 5, 432, 222);
-		this.textPane.setFont(new Font("Arial Black", (this.textPane.getFont().getStyle() & ~Font.ITALIC) | Font.BOLD, 25));
+		this.textPane.setFont(new Font("Arial Black", (this.textPane.getFont()
+				.getStyle() & ~Font.ITALIC) | Font.BOLD, 25));
 		final StyledDocument doc = this.textPane.getStyledDocument();
 		final SimpleAttributeSet center = new SimpleAttributeSet();
 		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);

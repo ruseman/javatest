@@ -48,10 +48,12 @@ public final class Question
 
 	public String getQuestionFormatted()
 	{
-		return this.prompt + "\n\nA: " + this.answers.get(0) + "\nB: " + this.answers.get(1) + "\nC: " + this.answers.get(2) + "\nD: " + this.answers.get(3);
+		return this.prompt + "\n\nA: " + this.answers.get(0) + "\nB: "
+				+ this.answers.get(1) + "\nC: " + this.answers.get(2) + "\nD: "
+				+ this.answers.get(3);
 	}
 	
-	void initialize()
+	public void initialize()
 	{
 		Game.LOGGER.info("Question:" + this.id + " is being initialized");
 		this.correct = this.answers.get(0);

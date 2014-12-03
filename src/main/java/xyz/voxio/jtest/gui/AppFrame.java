@@ -1,5 +1,6 @@
 package xyz.voxio.jtest.gui;
 
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -40,7 +41,7 @@ public final class AppFrame extends JFrame
 	 */
 	public AppFrame()
 	{
-		setResizable(false);
+		this.setResizable(false);
 		this.setTitle(Game.getNewTitle());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setBounds(100, 100, 500, 460);
@@ -56,7 +57,8 @@ public final class AppFrame extends JFrame
 		final JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
-		final JMenuItem mntmRefreshApplication = new JMenuItem("Refresh application");
+		final JMenuItem mntmRefreshApplication = new JMenuItem(
+				"Refresh application");
 		mntmRefreshApplication.addMouseListener(new MouseAdapter()
 		{
 			@Override
@@ -137,7 +139,10 @@ public final class AppFrame extends JFrame
 			@Override
 			public void mousePressed(final MouseEvent e)
 			{
-				Game.instance().getPlayer().choose(Game.instance().getQuestions().getCurrentQuestion(), Choice.A);
+				Game.instance()
+				.getPlayer()
+				.choose(Game.instance().getQuestions()
+						.getCurrentQuestion(), Choice.A);
 				AppFrame.this.repaint();
 			}
 		});
@@ -150,7 +155,10 @@ public final class AppFrame extends JFrame
 			@Override
 			public void mousePressed(final MouseEvent e)
 			{
-				Game.instance().getPlayer().choose(Game.instance().getQuestions().getCurrentQuestion(), Choice.B);
+				Game.instance()
+				.getPlayer()
+				.choose(Game.instance().getQuestions()
+						.getCurrentQuestion(), Choice.B);
 				AppFrame.this.repaint();
 			}
 		});
@@ -163,7 +171,10 @@ public final class AppFrame extends JFrame
 			@Override
 			public void mousePressed(final MouseEvent e)
 			{
-				Game.instance().getPlayer().choose(Game.instance().getQuestions().getCurrentQuestion(), Choice.C);
+				Game.instance()
+				.getPlayer()
+				.choose(Game.instance().getQuestions()
+						.getCurrentQuestion(), Choice.C);
 				AppFrame.this.repaint();
 			}
 		});
@@ -176,7 +187,10 @@ public final class AppFrame extends JFrame
 			@Override
 			public void mousePressed(final MouseEvent e)
 			{
-				Game.instance().getPlayer().choose(Game.instance().getQuestions().getCurrentQuestion(), Choice.D);
+				Game.instance()
+				.getPlayer()
+				.choose(Game.instance().getQuestions()
+						.getCurrentQuestion(), Choice.D);
 				AppFrame.this.repaint();
 				
 			}
@@ -191,7 +205,8 @@ public final class AppFrame extends JFrame
 		this.contentPane.add(this.questionPane);
 
 		this.scorePane = new JTextPane();
-		this.scorePane.setFont(new Font("Arial Black", (this.scorePane.getFont().getStyle() & ~Font.ITALIC) | Font.BOLD, 58));
+		this.scorePane.setFont(new Font("Arial Black", (this.scorePane
+				.getFont().getStyle() & ~Font.ITALIC) | Font.BOLD, 58));
 		this.scorePane.setEditable(false);
 		this.scorePane.setBounds(230, 314, 142, 101);
 		{
@@ -223,8 +238,24 @@ public final class AppFrame extends JFrame
 	@Override
 	public void repaint()
 	{
-		this.setQuestionPaneText(Game.instance().getQuestions().getCurrentQuestion().getQuestionFormatted());
-		this.setScorePaneText("" + Game.instance().getPlayer().getScore());
+		this.setQuestionPaneText(Game.instance().getQuestions()
+				.getCurrentQuestion().getQuestionFormatted());
+		try
+		{
+			this.setScorePaneText("" + Game.instance().getPlayer().getScore());
+		}
+		catch (final Exception e)
+		{
+			this.setScorePaneText("");
+			EventQueue.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					AppFrame.this.repaint();
+				}
+			});
+		}
 		super.repaint();
 	}
 	

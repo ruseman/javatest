@@ -1,13 +1,19 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
+apply plugin: 'eu.appsatori.fatjar'
 
 repositories {
   mavenCentral()
-}
-
-configurations {
-    provided
 }
 
 dependencies {
@@ -25,20 +31,6 @@ mainClassName = "xyz.voxio.jtest.Game"
 applicationDefaultJvmArgs = ["-Dgreeting.language=en"]
 applicationName = "JavaTest"
 
-compileJava {
-    sourceSets.main.compileClasspath += configurations.provided
-}
-
-run {
-    classpath += configurations.provided
-}
-
-eclipse{
-	classpath{
-		plusConfigurations += [configurations.provided]
-	}
-}
-
 task sourceJar(type: Jar) {
     from sourceSets.main.java
     classifier = 'src'
@@ -52,20 +44,14 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 jar {
 	dependsOn configurations.runtime
 	from{
-		configurations.provided.collect{
-			it.isDirectory()?it:zipTree(it)
-		}
 		"LICENSE.md"
-	}{
-		exclude "META-INF/*.SF"
-		exclude "META-INF/*.DSA"
-		exclude "MEFA-INF/*.RSA"
 	}
 }
 
 artifacts{
 	archives sourceJar
 	archives javadocJar
+	archives fatJar
 }
 
 task copyLicense {
@@ -80,34 +66,4 @@ task copyLicense {
  
 applicationDistribution.from(copyLicense) {
     into ""
-}
-
-String findJavacExecutable() {
-    File javaHome = new File( System.getProperty( "java.home" ) )
-    if( javaHome.getName().equals( "jre" ) ) {
-        javaHome = javaHome.getParentFile()
-    }
-    if( javaHome.getName().startsWith( "jdk${sourceCompatibility}" ) ) {
-        return null
-    }
-    File installDir = javaHome.getParentFile();
-    for( File file : installDir.listFiles() ) {
-        if( file.getName().startsWith( "jdk${sourceCompatibility}" ) ) {
-            return new File( file, "bin/javac" ).getAbsolutePath()
-        }
-    }
-    println "Warning: javac executable for ${sourceCompatibility} was not found."
-    return null
-}
-task findJavac {
-    description '===  find and set the javac executable for the given sourceCompatibility ==='
-    compileJava.dependsOn(findJavac)
-    doLast {
-        String executable = findJavacExecutable()
-        if( executable != null ) {
-            println "\tjavac: ${executable}"
-            compileJava.options.fork = true
-            compileJava.options.forkOptions.executable = executable
-        }
-    }
 }

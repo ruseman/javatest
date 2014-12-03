@@ -3,15 +3,19 @@ package xyz.voxio.jtest;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 
 import xyz.voxio.jtest.game.Player;
+import xyz.voxio.jtest.game.Question;
 import xyz.voxio.jtest.game.Questions;
 import xyz.voxio.jtest.gui.AboutFrame;
 import xyz.voxio.jtest.gui.AppFrame;
@@ -38,7 +42,8 @@ public final class Game
 	/**
 	 * The {@link Logger} used by the application
 	 */
-	public static final Logger	LOGGER					= Logger.getLogger(Game.class.getCanonicalName());
+	public static final Logger	LOGGER					= Logger.getLogger(Game.class
+			.getCanonicalName());
 	
 	/**
 	 * The web address for the pull requests page
@@ -75,6 +80,8 @@ public final class Game
 	 */
 	public static final String	TITLE					= "JTest";
 	
+	private static String[]		args;
+
 	/**
 	 * The instance of the game
 	 */
@@ -87,7 +94,7 @@ public final class Game
 	{
 		return new File(Game.QUESTIONS_JSON_LOCAL);
 	}
-
+	
 	/**
 	 * @return a new title, formatted, with a random splash appended to the end
 	 */
@@ -95,7 +102,7 @@ public final class Game
 	{
 		return Game.TITLE + " - " + Splash.getSplash().getRandomSplash();
 	}
-	
+
 	/**
 	 * @return the remote questions
 	 */
@@ -103,7 +110,8 @@ public final class Game
 	{
 		try
 		{
-			final String json = Util.parseURLtoString(new URL(Game.QUESTIONS_JSON_REMOTE));
+			final String json = Util.parseURLtoString(new URL(
+					Game.QUESTIONS_JSON_REMOTE));
 			final Gson gson = new Gson();
 			return gson.fromJson(json, Questions.class);
 		}
@@ -113,7 +121,7 @@ public final class Game
 		}
 		return Game.getRemoteQuestions();
 	}
-
+	
 	public static Game instance()
 	{
 		if (Game.instance == null)
@@ -128,15 +136,16 @@ public final class Game
 	 */
 	public static void main(final String[] args)
 	{
+		Game.args = args;
 		Game.instance().initialize();
 		Game.instance().start();
 	}
-	
+
 	/**
 	 * The "about" window
 	 */
 	private AboutFrame	aboutFrame;
-
+	
 	/**
 	 * The primary application window
 	 */
@@ -150,14 +159,14 @@ public final class Game
 	 * The local questions
 	 */
 	private Questions	questions;
-	
+
 	private State		state;
 
 	private Game()
 	{
 		
 	}
-
+	
 	public void changeState(final State state)
 	{
 		if ((state == null) || (state == this.state)) { return; }
@@ -167,8 +176,14 @@ public final class Game
 			Game.LOGGER.info("Game state is now " + this.state.toString());
 			return;
 		}
-		Game.LOGGER.info("Game state changing from " + this.state.toString() + " to " + state.toString());
+		Game.LOGGER.info("Game state changing from " + this.state.toString()
+				+ " to " + state.toString());
 		this.state = state;
+	}
+	
+	public void clearQuestions()
+	{
+		this.questions = null;
 	}
 	
 	public void cloneQuestions()
@@ -180,8 +195,10 @@ public final class Game
 				new File(Game.QUESTIONS_JSON_LOCAL).createNewFile();
 			}
 			final URL remote = new URL(Game.QUESTIONS_JSON_REMOTE);
-			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
-			final FileOutputStream fos = new FileOutputStream(Game.QUESTIONS_JSON_LOCAL);
+			final ReadableByteChannel rbc = Channels.newChannel(remote
+					.openStream());
+			final FileOutputStream fos = new FileOutputStream(
+					Game.QUESTIONS_JSON_LOCAL);
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			fos.close();
 		}
@@ -191,16 +208,27 @@ public final class Game
 		}
 	}
 	
+	public void configQuestions()
+	{
+		for (final Question question : this.questions.questions)
+		{
+			question.initialize();
+		}
+		Collections.shuffle(this.questions.questions);
+	}
+	
 	public void endGame(final Reason reason)
 	{
 		String endMessage = "";
 		switch (reason)
 		{
 			case NO_MORE_QUESTIONS:
-				endMessage = "You completed all of the questions!\n" + Splash.getSplash().getRandomEndSplash();
+				endMessage = "You completed all of the questions!\n"
+						+ Splash.getSplash().getRandomEndSplash();
 				break;
 			case OUT_OF_POINTS:
-				endMessage = "You ran out of points!\n" + Splash.getSplash().getRandomLoseSplash();
+				endMessage = "You ran out of points!\n"
+						+ Splash.getSplash().getRandomLoseSplash();
 				break;
 		}
 		final EndFrame frame = EndFrame.getNewInstance(endMessage);
@@ -211,25 +239,26 @@ public final class Game
 	{
 		return this.endFrame;
 	}
-	
+
 	public Player getPlayer()
 	{
 		return this.player;
 	}
-	
+
 	/**
 	 * @return the local questions
 	 */
 	public Questions getQuestions()
 	{
 		if (this.questions != null) { return this.questions; }
-		final String json = Util.parseFileToString(new File(Game.QUESTIONS_JSON_LOCAL));
+		final String json = Util.parseFileToString(new File(
+				Game.QUESTIONS_JSON_LOCAL));
 		final Gson gson = new Gson();
 		final Questions newQ = gson.fromJson(json, Questions.class);
 		this.questions = newQ;
 		return this.getQuestions();
 	}
-	
+
 	public State getState()
 	{
 		return this.state;
@@ -241,11 +270,14 @@ public final class Game
 	public void initialize()
 	{
 		this.changeState(State.INITIALIZING);
+		this.registerHooks();
 		Game.LOGGER.info("Loading the questions");
 		this.loadQuestions();
+		this.configQuestions();
 		Game.LOGGER.info("Questions have been loaded");
-		this.registerHooks();
-		
+		Game.LOGGER.info("Creating the GUI");
+		Game.this.createFrames();
+		Game.this.appFrame.setVisible(true);
 		Game.LOGGER.info("Creating a few objects...");
 		this.player = new Player();
 		new File("questions.json").deleteOnExit();
@@ -267,22 +299,65 @@ public final class Game
 		}
 		else
 		{
-			Util.infoBox("There is no internet connection.\nThe application must now close.", "Error");
+			Util.infoBox(
+					"There is no internet connection.\nThe application must now close.",
+					"Error");
 			this.shutdown();
 			return null;
 		}
 	}
-
+	
+	public void registerHooks()
+	{
+		Game.LOGGER.info("Registering hooks and handlers");
+		Game.LOGGER.info("Registering the global event handler");
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
+		{
+			@Override
+			public void uncaughtException(final Thread t, final Throwable e)
+			{
+				e.printStackTrace();
+				Game.LOGGER.info("Restarting due to an error...");
+				Game.instance().restartApplication();
+			}
+		});
+	}
+	
 	public void restartApplication()
 	{
-		Util.infoBox("The restart functionality is not fully functional\nThank you for your patience", "This is embarassing");
+		try
+		{
+			final StringBuilder cmd = new StringBuilder();
+			cmd.append(System.getProperty("java.home") + File.separator + "bin"
+					+ File.separator + "java ");
+			for (final String jvmArg : ManagementFactory.getRuntimeMXBean()
+					.getInputArguments())
+			{
+				cmd.append(jvmArg + " ");
+			}
+			cmd.append("-cp ")
+					.append(ManagementFactory.getRuntimeMXBean().getClassPath())
+					.append(" ");
+			cmd.append(Game.class.getName()).append(" ");
+			for (final String arg : Game.args)
+			{
+				cmd.append(arg).append(" ");
+			}
+			Runtime.getRuntime().exec(cmd.toString());
+		}
+		catch (final IOException e)
+		{
+			e.printStackTrace();
+		}
+		System.exit(0);
 	}
 
 	public boolean shouldUpdateQuestions()
 	{
 		try
 		{
-			return Game.getRemoteQuestions().getVersion() > this.getQuestions().getVersion();
+			return Game.getRemoteQuestions().getVersion() > this.getQuestions()
+					.getVersion();
 		}
 		catch (final Exception e)
 		{
@@ -319,7 +394,8 @@ public final class Game
 			public void run()
 			{
 				Game.this.changeState(State.RUNNING);
-				Game.LOGGER.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
+				Game.LOGGER
+				.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
 			}
 		});
 	}
@@ -329,50 +405,5 @@ public final class Game
 		this.appFrame = new AppFrame();
 		this.endFrame = new EndFrame();
 		this.aboutFrame = new AboutFrame();
-	}
-	
-	private void registerHooks()
-	{
-		Game.LOGGER.info("Registering hooks and handlers");
-		Game.LOGGER.info("Registering the global event handler");
-		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
-		{
-			@Override
-			public void uncaughtException(final Thread t, final Throwable e)
-			{
-				e.printStackTrace();
-				if (Game.this.state == State.INITIALIZING)
-				{
-					Game.LOGGER.info("Restarting due to an error...");
-					Game.instance().restartApplication();
-				}
-			}
-		});
-		Game.LOGGER.info("Registering shutdown hook");
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				Game.this.changeState(xyz.voxio.jtest.Game.State.SHUTTING_DOWN);
-			}
-		});
-		EventQueue.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					Game.this.createFrames();
-					Game.this.appFrame.setVisible(true);
-				}
-				catch (final Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-		
 	}
 }

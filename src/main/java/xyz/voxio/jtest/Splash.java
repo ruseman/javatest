@@ -11,7 +11,8 @@ public final class Splash
 {
 	public static Splash getSplash()
 	{
-		return new Gson().fromJson(Util.parseStreamToString(Splash.class.getResourceAsStream("splash.json")), Splash.class);
+		return new Gson().fromJson(Util.parseStreamToString(Splash.class
+				.getResourceAsStream("splash.json")), Splash.class);
 	}
 
 	private List<String>	endList;
@@ -36,7 +37,8 @@ public final class Splash
 	{
 		try
 		{
-			return this.loseList.get(new Random().nextInt(this.loseList.size()));
+			return this.loseList
+					.get(new Random().nextInt(this.loseList.size()));
 		}
 		catch (final NullPointerException e)
 		{

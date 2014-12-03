@@ -1,7 +1,5 @@
 package xyz.voxio.jtest.game;
 
-import java.awt.EventQueue;
-import java.util.Collections;
 import java.util.List;
 
 import xyz.voxio.jtest.Game;
@@ -20,22 +18,7 @@ public final class Questions
 
 	public Questions()
 	{
-		EventQueue.invokeLater(new Thread()
-		{
-			@Override
-			public void run()
-			{
-				if (Questions.this.questions == null)
-				{
 
-				}
-				for (final Question question : Questions.this.questions)
-				{
-					question.initialize();
-				}
-				Collections.shuffle(Questions.this.questions);
-			}
-		});
 	}
 	
 	public int getCurrentNum()
