@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import xyz.voxio.jtest.Game;
-import xyz.voxio.jtest.Reason;
+import xyz.voxio.jtest.Game.Reason;
 
 /**
  * @author Tim Miller
@@ -13,11 +13,11 @@ import xyz.voxio.jtest.Reason;
 public final class Questions
 {
 	public List<Question>	questions;
-
+	
 	private int				index	= 0;
-	
+
 	private int				version;
-	
+
 	public Questions()
 	{
 		EventQueue.invokeLater(new Thread()
@@ -25,15 +25,27 @@ public final class Questions
 			@Override
 			public void run()
 			{
-				for (final Question question : Questions.this.questions)
+				try
 				{
-					question.initialize();
+					for (final Question question : Questions.this.questions)
+					{
+						question.initialize();
+					}
+				}
+				catch (final NullPointerException e)
+				{
+
 				}
 				Collections.shuffle(Questions.this.questions);
 			}
 		});
 	}
 	
+	public int getCurrentNum()
+	{
+		return this.index + 1;
+	}
+
 	public Question getCurrentQuestion()
 	{
 		try
@@ -52,12 +64,17 @@ public final class Questions
 	{
 		return this.questions;
 	}
-
+	
+	public int getTotalNum()
+	{
+		return this.questions.size();
+	}
+	
 	public int getVersion()
 	{
 		return this.version;
 	}
-
+	
 	public void nextQuestion()
 	{
 		this.index++;
