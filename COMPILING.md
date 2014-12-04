@@ -27,3 +27,6 @@ The executable jar, along with the source and javadoc jar, will be located in `b
 Simply run `gradlew build`  
 The executable jar, along with the source and javadoc jar, will be located in `build/libs`  
 If that doesn't work, try following the [Mac instructions](COMPILING.md#Mac)
+
+###Notes
+The runnable jar will be located in `build/libs`, and will be named javatest-VERSION-exec.jar.  None of the other jars are runnable.

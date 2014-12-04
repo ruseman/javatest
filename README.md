@@ -24,3 +24,4 @@ See [here](LICENSE.md)
 * Google - Development of the Guava and GSON libraries
 * Gradleware - Development of Gradle, which has made dependency management and build distribution so much easier and so much harder
 * [StackOverflow](http://stackoverflow.com/) - A fantastic community that I've relied on for years
+
