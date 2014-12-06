@@ -17,22 +17,22 @@ public final class Questions
 	 * The questions
 	 */
 	public List<Question>	questions;
-
+	
 	/**
 	 * The current question
 	 */
 	private int				index	= 0;
-	
+
 	/**
 	 * The version
 	 */
 	private int				version;
-	
+
 	public Questions()
 	{
-		
-	}
 
+	}
+	
 	/**
 	 * @return the current question number
 	 */
@@ -40,7 +40,7 @@ public final class Questions
 	{
 		return this.index + 1;
 	}
-	
+
 	/**
 	 * @return the current question
 	 */
@@ -57,7 +57,7 @@ public final class Questions
 			return this.getCurrentQuestion();
 		}
 	}
-	
+
 	/**
 	 * @return the questions
 	 */
@@ -65,7 +65,7 @@ public final class Questions
 	{
 		return this.questions;
 	}
-
+	
 	/**
 	 * @return the total number of questions
 	 */
@@ -73,7 +73,7 @@ public final class Questions
 	{
 		return this.questions.size();
 	}
-
+	
 	/**
 	 * @return the version
 	 */
@@ -81,7 +81,7 @@ public final class Questions
 	{
 		return this.version;
 	}
-
+	
 	/**
 	 * Moves the index to the next question
 	 */

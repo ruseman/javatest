@@ -1,16 +1,17 @@
 package xyz.voxio.jtest;
 
 import java.awt.EventQueue;
+import java.lang.management.ManagementFactory;
+import java.net.URL;
+import java.util.Collections;
+import java.util.logging.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.management.ManagementFactory;
-import java.net.URL;
+
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Collections;
-import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 
@@ -42,7 +43,7 @@ public final class Game
 	{
 		NO_MORE_QUESTIONS, OUT_OF_POINTS;
 	}
-
+	
 	/**
 	 * The enumerated class for the possible lifecycle states of the application
 	 *
@@ -52,63 +53,62 @@ public final class Game
 	{
 		INITIALIZING, RUNNING, SHUTTING_DOWN;
 	}
-
+	
 	/**
 	 * The web address for the issue tracker
 	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
-
+	
 	/**
 	 * The {@link Logger} used by the application
 	 */
-	public static final Logger	LOGGER					= Logger.getLogger(Game.class
-																.getCanonicalName());
-
+	public static final Logger	LOGGER					= Logger.getLogger(Game.class.getCanonicalName());
+	
 	/**
 	 * The web address for the pull requests page
 	 */
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
-
+	
 	/**
 	 * The path to the local questions json file
 	 */
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
-
+	
 	/**
 	 * The web address for the remote questions json file
 	 */
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
-
+	
 	/**
 	 * The repository for the questions
 	 */
 	public static final String	QUESTIONS_REPO			= "https://github.com/Commador/JavaTestQuestions";
-
+	
 	/**
 	 * The project repo
 	 */
 	public static final String	REPO					= "https://github.com/Commador/JavaTest";
-	
+
 	/**
 	 * The temporary directory path, and I can't remember what I wanted to do
 	 */
 	public static final String	TEMP					= ".jtest_temp/";
-
+	
 	/**
 	 * The title of the application
 	 */
 	public static final String	TITLE					= "JTest";
-
+	
 	/**
 	 * The cli args
 	 */
 	private static String[]		args;
-	
+
 	/**
 	 * The instance of the game
 	 */
 	private static Game			instance;
-	
+
 	/**
 	 * @return a new instance of the local questions file
 	 */
@@ -116,7 +116,7 @@ public final class Game
 	{
 		return new File(Game.QUESTIONS_JSON_LOCAL);
 	}
-
+	
 	/**
 	 * @return a new title, formatted, with a random splash appended to the end
 	 */
@@ -124,7 +124,7 @@ public final class Game
 	{
 		return Game.TITLE + " - " + Splash.getSplash().getRandomSplash();
 	}
-	
+
 	/**
 	 * @return the remote questions
 	 */
@@ -132,8 +132,7 @@ public final class Game
 	{
 		try
 		{
-			final String json = Util.parseURLtoString(new URL(
-					Game.QUESTIONS_JSON_REMOTE));
+			final String json = Util.parseURLtoString(new URL(Game.QUESTIONS_JSON_REMOTE));
 			final Gson gson = new Gson();
 			return gson.fromJson(json, Questions.class);
 		}
@@ -143,7 +142,7 @@ public final class Game
 		}
 		return Game.getRemoteQuestions();
 	}
-
+	
 	/**
 	 * @return the instance of the game
 	 */
@@ -155,7 +154,7 @@ public final class Game
 		}
 		return Game.instance;
 	}
-
+	
 	/**
 	 * Launches the application
 	 */
@@ -165,42 +164,42 @@ public final class Game
 		Game.instance().initialize();
 		Game.instance().start();
 	}
-	
+
 	/**
 	 * The "about" window
 	 */
 	private AboutFrame	aboutFrame;
-
+	
 	/**
 	 * The primary application window
 	 */
 	private AppFrame	appFrame;
-
+	
 	/**
 	 * The end game application window
 	 */
 	private EndFrame	endFrame;
-
+	
 	/**
 	 * The player object
 	 */
 	private Player		player;
-
+	
 	/**
 	 * The local questions
 	 */
 	private Questions	questions;
-	
+
 	/**
 	 * The current lifecycle state
 	 */
 	private State		state;
-	
+
 	private Game()
 	{
-
+		
 	}
-
+	
 	/**
 	 * Changes the state and logs it to the console
 	 *
@@ -216,11 +215,10 @@ public final class Game
 			Game.LOGGER.info("Game state is now " + this.state.toString());
 			return;
 		}
-		Game.LOGGER.info("Game state changing from " + this.state.toString()
-				+ " to " + state.toString());
+		Game.LOGGER.info("Game state changing from " + this.state.toString() + " to " + state.toString());
 		this.state = state;
 	}
-
+	
 	/**
 	 * Deletes the questions
 	 */
@@ -228,7 +226,7 @@ public final class Game
 	{
 		this.questions = null;
 	}
-
+	
 	/**
 	 * Clones the questions from the remote to the harddisc
 	 */
@@ -241,10 +239,9 @@ public final class Game
 				new File(Game.QUESTIONS_JSON_LOCAL).createNewFile();
 			}
 			final URL remote = new URL(Game.QUESTIONS_JSON_REMOTE);
-			final ReadableByteChannel rbc = Channels.newChannel(remote
-					.openStream());
-			final FileOutputStream fos = new FileOutputStream(
-					Game.QUESTIONS_JSON_LOCAL);
+			@SuppressWarnings("resource")
+			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
+			final FileOutputStream fos = new FileOutputStream(Game.QUESTIONS_JSON_LOCAL);
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			fos.close();
 		}
@@ -253,7 +250,7 @@ public final class Game
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Configure the questions object
 	 */
@@ -265,7 +262,7 @@ public final class Game
 		}
 		Collections.shuffle(this.questions.questions);
 	}
-
+	
 	/**
 	 * Ends the game
 	 *
@@ -278,18 +275,16 @@ public final class Game
 		switch (reason)
 		{
 			case NO_MORE_QUESTIONS:
-				endMessage = "You completed all of the questions!\n"
-						+ Splash.getSplash().getRandomEndSplash();
+				endMessage = "You completed all of the questions!\n" + Splash.getSplash().getRandomEndSplash();
 				break;
 			case OUT_OF_POINTS:
-				endMessage = "You ran out of points!\n"
-						+ Splash.getSplash().getRandomLoseSplash();
+				endMessage = "You ran out of points!\n" + Splash.getSplash().getRandomLoseSplash();
 				break;
 		}
 		final EndFrame frame = EndFrame.getNewInstance(endMessage);
 		frame.setVisible(true);
 	}
-
+	
 	/**
 	 * @return the end frame
 	 */
@@ -297,7 +292,7 @@ public final class Game
 	{
 		return this.endFrame;
 	}
-	
+
 	/**
 	 * @return the player object
 	 */
@@ -305,21 +300,20 @@ public final class Game
 	{
 		return this.player;
 	}
-	
+
 	/**
 	 * @return the local questions
 	 */
 	public Questions getQuestions()
 	{
 		if (this.questions != null) { return this.questions; }
-		final String json = Util.parseFileToString(new File(
-				Game.QUESTIONS_JSON_LOCAL));
+		final String json = Util.parseFileToString(new File(Game.QUESTIONS_JSON_LOCAL));
 		final Gson gson = new Gson();
 		final Questions newQ = gson.fromJson(json, Questions.class);
 		this.questions = newQ;
 		return this.getQuestions();
 	}
-	
+
 	/**
 	 * @return the current state
 	 */
@@ -327,7 +321,7 @@ public final class Game
 	{
 		return this.state;
 	}
-	
+
 	/**
 	 * Initializes the application, creating the necessary objects
 	 */
@@ -346,7 +340,7 @@ public final class Game
 		this.player = new Player();
 		new File("questions.json").deleteOnExit();
 	}
-	
+
 	/**
 	 * Determines whether or not the questions need to be updated, updates them,
 	 * and then loads them as an instance of {@link Questions}
@@ -363,14 +357,12 @@ public final class Game
 		}
 		else
 		{
-			Util.infoBox(
-					"There is no internet connection.\nThe application must now close.",
-					"Error");
+			Util.infoBox("There is no internet connection.\nThe application must now close.", "Error");
 			this.shutdown();
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Registers the game hooks, which used to consist of the exception handler,
 	 * shutdown hook, and a few threads to be ran after initialization, but now
@@ -380,18 +372,14 @@ public final class Game
 	{
 		Game.LOGGER.info("Registering hooks and handlers");
 		Game.LOGGER.info("Registering the global event handler");
-		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
+		Thread.setDefaultUncaughtExceptionHandler((t, e) ->
 		{
-			@Override
-			public void uncaughtException(final Thread t, final Throwable e)
-			{
-				e.printStackTrace();
-				Game.LOGGER.info("Restarting due to an error...");
-				Game.instance().restartApplication();
-			}
+			e.printStackTrace();
+			Game.LOGGER.info("Restarting due to an error...");
+			Game.instance().restartApplication();
 		});
 	}
-
+	
 	/**
 	 * Restarts the application. this sometimes doesn't work, depending upon the
 	 * user's java configuration
@@ -401,16 +389,12 @@ public final class Game
 		try
 		{
 			final StringBuilder cmd = new StringBuilder();
-			cmd.append(System.getProperty("java.home") + File.separator + "bin"
-					+ File.separator + "java ");
-			for (final String jvmArg : ManagementFactory.getRuntimeMXBean()
-					.getInputArguments())
+			cmd.append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java ");
+			for (final String jvmArg : ManagementFactory.getRuntimeMXBean().getInputArguments())
 			{
 				cmd.append(jvmArg + " ");
 			}
-			cmd.append("-cp ")
-			.append(ManagementFactory.getRuntimeMXBean().getClassPath())
-			.append(" ");
+			cmd.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
 			cmd.append(Game.class.getName()).append(" ");
 			for (final String arg : Game.args)
 			{
@@ -424,7 +408,7 @@ public final class Game
 		}
 		System.exit(0);
 	}
-	
+
 	/**
 	 * @return whether or not the application should update the questions, used
 	 *         back when the questions were cached locally
@@ -433,8 +417,7 @@ public final class Game
 	{
 		try
 		{
-			return Game.getRemoteQuestions().getVersion() > this.getQuestions()
-					.getVersion();
+			return Game.getRemoteQuestions().getVersion() > this.getQuestions().getVersion();
 		}
 		catch (final Exception e)
 		{
@@ -442,7 +425,7 @@ public final class Game
 			return true;
 		}
 	}
-
+	
 	/**
 	 * Show the about window
 	 */
@@ -450,7 +433,7 @@ public final class Game
 	{
 		this.aboutFrame.setVisible(true);
 	}
-
+	
 	/**
 	 * Shutdown the application nicely
 	 */
@@ -459,24 +442,19 @@ public final class Game
 		this.changeState(State.SHUTTING_DOWN);
 		System.exit(0);
 	}
-	
+
 	/**
 	 * Start the game
 	 */
 	public void start()
 	{
-		EventQueue.invokeLater(new Runnable()
+		EventQueue.invokeLater(() ->
 		{
-			@Override
-			public void run()
-			{
-				Game.this.changeState(State.RUNNING);
-				Game.LOGGER
-						.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
-			}
+			Game.this.changeState(State.RUNNING);
+			Game.LOGGER.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
 		});
 	}
-
+	
 	/**
 	 * Create the three gui frames
 	 */

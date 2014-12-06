@@ -17,12 +17,12 @@ public final class Player
 	 * The starting score
 	 */
 	public static final int	STARTING_SCORE	= 10;
-
+	
 	/**
 	 * The score
 	 */
 	private int				score			= Player.STARTING_SCORE;
-
+	
 	/**
 	 * Determines whether or not the choice was correct, and performs the
 	 * appropriate actions
@@ -53,7 +53,7 @@ public final class Player
 		}
 		Game.instance().getQuestions().nextQuestion();
 	}
-
+	
 	/**
 	 * Increments the score by 1
 	 */
@@ -61,7 +61,7 @@ public final class Player
 	{
 		this.score++;
 	}
-
+	
 	/**
 	 * @return the score
 	 */
@@ -69,7 +69,7 @@ public final class Player
 	{
 		return this.score;
 	}
-
+	
 	/**
 	 * Part of the unfinished RUN feature
 	 */
@@ -77,7 +77,7 @@ public final class Player
 	{
 		Game.LOGGER.info("RUN selected");
 	}
-
+	
 	/**
 	 * Decrements the score
 	 */

@@ -21,16 +21,15 @@ public final class Splash
 	 */
 	public static Splash getSplash()
 	{
-		return new Gson().fromJson(Util.parseStreamToString(Splash.class
-				.getResourceAsStream("splash.json")), Splash.class);
+		return new Gson().fromJson(Util.parseStreamToString(Splash.class.getResourceAsStream("splash.json")), Splash.class);
 	}
-	
+
 	private List<String>	endList;
-	
+
 	private List<String>	list;
-
+	
 	private List<String>	loseList;
-
+	
 	/**
 	 * @return a splash string used in the end screen if the player won
 	 */
@@ -45,7 +44,7 @@ public final class Splash
 			return "Thanks for playing";
 		}
 	}
-
+	
 	/**
 	 * @return a splash string used in the end screen if the player lost
 	 */
@@ -53,15 +52,14 @@ public final class Splash
 	{
 		try
 		{
-			return this.loseList
-					.get(new Random().nextInt(this.loseList.size()));
+			return this.loseList.get(new Random().nextInt(this.loseList.size()));
 		}
 		catch (final NullPointerException e)
 		{
 			return "Game over man, game over";
 		}
 	}
-
+	
 	/**
 	 * @return a splash string used in the title bar
 	 */
