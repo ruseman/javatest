@@ -239,7 +239,6 @@ public final class Game
 				new File(Game.QUESTIONS_JSON_LOCAL).createNewFile();
 			}
 			final URL remote = new URL(Game.QUESTIONS_JSON_REMOTE);
-			@SuppressWarnings("resource")
 			final ReadableByteChannel rbc = Channels.newChannel(remote.openStream());
 			final FileOutputStream fos = new FileOutputStream(Game.QUESTIONS_JSON_LOCAL);
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
