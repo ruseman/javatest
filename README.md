@@ -16,11 +16,19 @@ The releases can be found [here](https://github.com/Commador/JavaTest/releases).
 
 ##Dependencies
 
-While the project does depend on the [Guava](https://code.google.com/p/guava-libraries/) library and the [GSON](https://code.google.com/p/google-gson/) library, both of these dependencies are handled by Gradle's dependency management.  The source ships with a Gradle wrapper, so there should be no concern over whether or not you have Gradle installed.
+While the project does depend on the [Guava](https://code.google.com/p/guava-libraries/) library and the [GSON](https://code.google.com/p/google-gson/) library, both of these dependencies are handled by Gradle's dependency management.  The source ships with a Gradle wrapper, so there should be no concern over whether or not you have Gradle installed.  Lastly, this application makes use of VoxioLib, my *very* WIP java library.  VoxioLib can be found [here](https://github.com/voxio/lib).
 
 ##Licensing
 
 See [here](LICENSE.md)
+
+##Goals
+
+Despite having completed the assignment, I'm planning on reworking this application with a few features
+* Question formats (Multiple choice, true/false, etc.)
+* Load custom questions files from url
+* Cache questions in a place
+* Rework class structure for less nonsense
 
 ##Credits
 
