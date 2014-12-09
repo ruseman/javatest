@@ -1,5 +1,7 @@
 package xyz.voxio.jtest.game;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import xyz.voxio.jtest.Game;
@@ -17,22 +19,22 @@ public final class Questions
 	 * The questions
 	 */
 	public List<Question>	questions;
-	
+
 	/**
 	 * The current question
 	 */
 	private int				index	= 0;
-
+	
 	/**
 	 * The version
 	 */
 	private int				version;
-
+	
 	public Questions()
 	{
-
+		
 	}
-	
+
 	/**
 	 * @return the current question number
 	 */
@@ -40,11 +42,13 @@ public final class Questions
 	{
 		return this.index + 1;
 	}
-
+	
 	/**
 	 * @return the current question
+	 * @throws URISyntaxException
+	 * @throws IOException
 	 */
-	public Question getCurrentQuestion()
+	public Question getCurrentQuestion() throws IOException, URISyntaxException
 	{
 		try
 		{
@@ -57,7 +61,7 @@ public final class Questions
 			return this.getCurrentQuestion();
 		}
 	}
-
+	
 	/**
 	 * @return the questions
 	 */
@@ -65,7 +69,7 @@ public final class Questions
 	{
 		return this.questions;
 	}
-	
+
 	/**
 	 * @return the total number of questions
 	 */
@@ -73,7 +77,7 @@ public final class Questions
 	{
 		return this.questions.size();
 	}
-	
+
 	/**
 	 * @return the version
 	 */
@@ -81,7 +85,7 @@ public final class Questions
 	{
 		return this.version;
 	}
-	
+
 	/**
 	 * Moves the index to the next question
 	 */

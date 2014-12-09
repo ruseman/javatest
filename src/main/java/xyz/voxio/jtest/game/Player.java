@@ -1,5 +1,8 @@
 package xyz.voxio.jtest.game;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import xyz.voxio.jtest.Game;
 import xyz.voxio.jtest.Game.Reason;
 import xyz.voxio.jtest.game.Question.Choice;
@@ -17,12 +20,12 @@ public final class Player
 	 * The starting score
 	 */
 	public static final int	STARTING_SCORE	= 10;
-	
+
 	/**
 	 * The score
 	 */
 	private int				score			= Player.STARTING_SCORE;
-	
+
 	/**
 	 * Determines whether or not the choice was correct, and performs the
 	 * appropriate actions
@@ -31,8 +34,11 @@ public final class Player
 	 *            the question
 	 * @param choice
 	 *            the choice
+	 * @throws URISyntaxException
+	 * @throws IOException
 	 */
 	public void choose(final Question question, final Choice choice)
+			throws IOException, URISyntaxException
 	{
 		Game.LOGGER.info("Choice:" + choice.toString() + " chosen");
 		final boolean correct = question.correct(choice);
@@ -53,7 +59,7 @@ public final class Player
 		}
 		Game.instance().getQuestions().nextQuestion();
 	}
-	
+
 	/**
 	 * Increments the score by 1
 	 */
@@ -61,7 +67,7 @@ public final class Player
 	{
 		this.score++;
 	}
-	
+
 	/**
 	 * @return the score
 	 */
@@ -69,7 +75,7 @@ public final class Player
 	{
 		return this.score;
 	}
-	
+
 	/**
 	 * Part of the unfinished RUN feature
 	 */
@@ -77,7 +83,7 @@ public final class Player
 	{
 		Game.LOGGER.info("RUN selected");
 	}
-	
+
 	/**
 	 * Decrements the score
 	 */

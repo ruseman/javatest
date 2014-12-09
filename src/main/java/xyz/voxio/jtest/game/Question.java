@@ -21,7 +21,7 @@ public final class Question
 	public static enum Choice
 	{
 		A, B, C, D;
-
+		
 		/**
 		 * @return the number corresponding to the given choice
 		 */
@@ -41,38 +41,38 @@ public final class Question
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * The number of questions, starting at 1
 	 */
 	private static int		count	= 1;
-
+	
 	/**
 	 * The four possible answers, in no particular order
 	 */
 	private List<String>	answers;
-	
+
 	/**
 	 * The correct answer
 	 */
 	private String			correct;
-
+	
 	/**
 	 * The numeric id for the question, used in debugging
 	 */
 	private final int		id;
-
+	
 	/**
 	 * The prompt for the question
 	 */
 	private String			prompt;
-	
+
 	public Question()
 	{
 		this.id = Question.count;
 		Question.count++;
 	}
-
+	
 	/**
 	 * @param choice
 	 *            the choice
@@ -82,7 +82,7 @@ public final class Question
 	{
 		return this.correct.equals(this.answers.get(choice.toIndex()));
 	}
-
+	
 	/**
 	 * @return a list of the answers
 	 */
@@ -90,7 +90,7 @@ public final class Question
 	{
 		return this.answers;
 	}
-
+	
 	/**
 	 * @return the correct answer
 	 */
@@ -98,7 +98,7 @@ public final class Question
 	{
 		return this.correct;
 	}
-
+	
 	/**
 	 * @return the prompt
 	 */
@@ -106,16 +106,18 @@ public final class Question
 	{
 		return this.prompt;
 	}
-
+	
 	/**
 	 * @return the question in it's fully formatted format, with the answers and
 	 *         linebreaks and stuff
 	 */
 	public String getQuestionFormatted()
 	{
-		return this.prompt + "\n\nA: " + this.answers.get(0) + "\nB: " + this.answers.get(1) + "\nC: " + this.answers.get(2) + "\nD: " + this.answers.get(3);
+		return this.prompt + "\n\nA: " + this.answers.get(0) + "\nB: "
+				+ this.answers.get(1) + "\nC: " + this.answers.get(2) + "\nD: "
+				+ this.answers.get(3);
 	}
-	
+
 	/**
 	 * Initializes the question object, assigning the correct answer and
 	 * shuffling the questions
