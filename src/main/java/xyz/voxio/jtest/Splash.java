@@ -22,7 +22,7 @@ public final class Splash
 	/**
 	 * This is the factory method for the class. It generates the object from
 	 * the JSON file using the GSON reader
-	 * 
+	 *
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 * @throws JsonSyntaxException
