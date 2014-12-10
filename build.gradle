@@ -31,48 +31,13 @@ mainClassName = "xyz.voxio.jtest.Game"
 applicationDefaultJvmArgs = ["-Dgreeting.language=en"]
 applicationName = "JavaTest"
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.java
-    classifier = 'src'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier 'javadoc'
-    from javadoc.destinationDir
-}
-
-jar {
-	dependsOn configurations.runtime
-	from{
-		"LICENSE.md"
-	}
-}
-
 fatJar{
-    classifier = 'exec'
+    classifier = ''
     manifest {
     attributes 'Main-Class': project.mainClassName
 	}
 }
 
-
-
 artifacts{
-	archives sourceJar
-	archives javadocJar
 	archives fatJar
-}
-
-task copyLicense {
-    outputs.file new File("$buildDir/LICENSE.md")
-    doLast {
-        copy {
-            from "LICENSE.md"
-            into "$buildDir"
-        }
-    }
-}
- 
-applicationDistribution.from(copyLicense) {
-    into ""
 }
