@@ -35,6 +35,9 @@ import javax.swing.text.StyledDocument;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import xyz.voxio.lib.api.Application;
+import xyz.voxio.lib.api.Meta;
+import xyz.voxio.lib.api.Splash;
 import xyz.voxio.lib.util.Bytes;
 import xyz.voxio.lib.util.SwingUtilities;
 import xyz.voxio.lib.util.WebUtilities;
@@ -47,7 +50,7 @@ import xyz.voxio.lib.util.WebUtilities;
  *
  * @author Tim Miller
  */
-public final class Game
+public final class Game implements Application
 {
 	/**
 	 * This class is procedurally generated using the eclipse windowbuilder
@@ -78,7 +81,7 @@ public final class Game
 			final JTextPane txtpnThisApplicationWas = new JTextPane();
 			txtpnThisApplicationWas.setEditable(false);
 			txtpnThisApplicationWas
-					.setText("This application was wriiten in 2014 by Timothy Miller.  It's a simple game, where the player answers questions about Java.\r\n\r\nThe player begins with 10 points, and answers questions until they've either run out of points, answered all of the questions, or gotten bored.  A correct answer rewards a point, and an incorrect answer results in a loss of a point.\r\n\r\nThe source code is available on github, as are the questions.\r\n\r\nSource code repo: https://github.com/Commador/JavaTest\r\nQuestions repo: https://github.com/Commador/JavaTestQuestions\r\n\r\nThank you for playing");
+			.setText("This application was wriiten in 2014 by Timothy Miller.  It's a simple game, where the player answers questions about Java.\r\n\r\nThe player begins with 10 points, and answers questions until they've either run out of points, answered all of the questions, or gotten bored.  A correct answer rewards a point, and an incorrect answer results in a loss of a point.\r\n\r\nThe source code is available on github, as are the questions.\r\n\r\nSource code repo: https://github.com/Commador/JavaTest\r\nQuestions repo: https://github.com/Commador/JavaTestQuestions\r\n\r\nThank you for playing");
 			this.contentPane.add(txtpnThisApplicationWas, BorderLayout.CENTER);
 		}
 
@@ -109,7 +112,7 @@ public final class Game
 		 * @throws JsonSyntaxException
 		 */
 		public AppFrame() throws JsonSyntaxException, IOException,
-				URISyntaxException
+		URISyntaxException
 		{
 			this.setResizable(false);
 			this.setTitle(Game.this.getNewTitle());
@@ -323,7 +326,7 @@ public final class Game
 				final StyledDocument doc = this.scorePane.getStyledDocument();
 				final SimpleAttributeSet center = new SimpleAttributeSet();
 				StyleConstants
-						.setAlignment(center, StyleConstants.ALIGN_CENTER);
+				.setAlignment(center, StyleConstants.ALIGN_CENTER);
 				doc.setParagraphAttributes(0, doc.getLength(), center, false);
 			}
 			this.contentPane.add(this.scorePane);
@@ -724,7 +727,7 @@ public final class Game
 		 * @throws IOException
 		 */
 		public Question getCurrentQuestion() throws IOException,
-		URISyntaxException
+				URISyntaxException
 		{
 			try
 			{
@@ -806,7 +809,7 @@ public final class Game
 	 * The {@link Logger} used by the application
 	 */
 	public static final Logger	LOGGER					= Logger.getLogger(Game.class
-																.getCanonicalName());
+			.getCanonicalName());
 
 	/**
 	 * The web address for the pull requests page
@@ -862,32 +865,41 @@ public final class Game
 	/**
 	 * The "about" window
 	 */
-	private AboutFrame	aboutFrame;
+	private AboutFrame		aboutFrame;
 
 	/**
 	 * The primary application window
 	 */
-	private AppFrame	appFrame;
+	private AppFrame		appFrame;
 
 	/**
 	 * The end game application window
 	 */
-	private EndFrame	endFrame;
+	private EndFrame		endFrame;
+
+	private final Splash	endList		= Splash.getSplash(Game.class,
+												"end.json");
+
+	private final Splash	loseList	= Splash.getSplash(Game.class,
+												"lose.json");
 
 	/**
 	 * The player object
 	 */
-	private Player		player;
+	private Player			player;
 
 	/**
 	 * The local questions
 	 */
-	private Questions	questions;
+	private Questions		questions;
+
+	private final Splash	splashList	= Splash.getSplash(Game.class,
+												"splash.json");
 
 	/**
 	 * The current lifecycle state
 	 */
-	private State		state;
+	private State			state;
 
 	private Game()
 	{
@@ -999,18 +1011,18 @@ public final class Game
 	 *            the reason for ending
 	 */
 	public void endGame(final Reason reason) throws IOException,
-			URISyntaxException
+	URISyntaxException
 	{
 		String endMessage = "";
 		switch (reason)
 		{
 			case NO_MORE_QUESTIONS:
 				endMessage = "You completed all of the questions!\n"
-						+ Splash.getSplash().getRandomEndSplash();
+						+ this.endList.getRandomSplash();
 				break;
 			case OUT_OF_POINTS:
 				endMessage = "You ran out of points!\n"
-						+ Splash.getSplash().getRandomLoseSplash();
+						+ this.loseList.getRandomSplash();
 				break;
 		}
 		final EndFrame frame = new EndFrame(endMessage);
@@ -1040,9 +1052,9 @@ public final class Game
 	 * @throws JsonSyntaxException
 	 */
 	public String getNewTitle() throws JsonSyntaxException, IOException,
-			URISyntaxException
+	URISyntaxException
 	{
-		return Game.TITLE + " - " + Splash.getSplash().getRandomSplash();
+		return Game.TITLE + " - " + this.splashList.getRandomSplash();
 	}
 
 	/**
@@ -1139,6 +1151,13 @@ public final class Game
 		new File("questions.json").deleteOnExit();
 	}
 
+	@Override
+	public void initialize(final String[] arg0)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
 	 * Determines whether or not the questions need to be updated, updates them,
 	 * and then loads them as an instance of {@link Questions}
@@ -1158,12 +1177,19 @@ public final class Game
 		else
 		{
 			SwingUtilities
-					.infoBox(
-							"There is no internet connection.\nThe application must now close.",
-							"Error");
+			.infoBox(
+					"There is no internet connection.\nThe application must now close.",
+					"Error");
 			this.shutdown();
 			return null;
 		}
+	}
+
+	@Override
+	public Meta meta()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -1183,6 +1209,13 @@ public final class Game
 		});
 	}
 
+	@Override
+	public void restart()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
 	 * Restarts the application. this sometimes doesn't work, depending upon the
 	 * user's java configuration
@@ -1200,8 +1233,8 @@ public final class Game
 				cmd.append(jvmArg + " ");
 			}
 			cmd.append("-cp ")
-					.append(ManagementFactory.getRuntimeMXBean().getClassPath())
-					.append(" ");
+			.append(ManagementFactory.getRuntimeMXBean().getClassPath())
+			.append(" ");
 			cmd.append(Game.class.getName()).append(" ");
 			for (final String arg : Game.args)
 			{
@@ -1245,6 +1278,7 @@ public final class Game
 	/**
 	 * Shutdown the application nicely
 	 */
+	@Override
 	public void shutdown()
 	{
 		this.changeState(State.SHUTTING_DOWN);
@@ -1254,15 +1288,16 @@ public final class Game
 	/**
 	 * Start the game
 	 */
+	@Override
 	public void start()
 	{
 		EventQueue
-		.invokeLater(() ->
-		{
-			Game.this.changeState(State.RUNNING);
-			Game.LOGGER
-			.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
-		});
+				.invokeLater(() ->
+				{
+					Game.this.changeState(State.RUNNING);
+					Game.LOGGER
+							.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
+				});
 	}
 
 }
