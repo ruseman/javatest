@@ -35,9 +35,9 @@ public final class Splash
 						new File(Splash.class.getResource("splash.json")
 								.toURI())).toString(), Splash.class);
 	}
-	
+
 	private List<String>	endList;
-	
+
 	private List<String>	list;
 
 	private List<String>	loseList;

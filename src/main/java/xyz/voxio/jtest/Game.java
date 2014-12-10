@@ -8,8 +8,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -17,6 +15,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+
+import java.lang.management.ManagementFactory;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -54,14 +54,14 @@ public final class Game
 	 */
 	public final class AboutFrame extends JFrame
 	{
-		
+
 		/**
 		 *
 		 */
 		private static final long	serialVersionUID	= -4208952844824385757L;
 
 		private final JPanel		contentPane;
-		
+
 		/**
 		 * Create the frame.
 		 */
@@ -81,24 +81,24 @@ public final class Game
 					.setText("This application was wriiten in 2014 by Timothy Miller.  It's a simple game, where the player answers questions about Java.\r\n\r\nThe player begins with 10 points, and answers questions until they've either run out of points, answered all of the questions, or gotten bored.  A correct answer rewards a point, and an incorrect answer results in a loss of a point.\r\n\r\nThe source code is available on github, as are the questions.\r\n\r\nSource code repo: https://github.com/Commador/JavaTest\r\nQuestions repo: https://github.com/Commador/JavaTestQuestions\r\n\r\nThank you for playing");
 			this.contentPane.add(txtpnThisApplicationWas, BorderLayout.CENTER);
 		}
-		
+
 	}
-	
+
 	/**
 	 * This class is procedurally generated using the eclipse windowbuilder
 	 */
 	public final class AppFrame extends JFrame
 	{
-		
+
 		/**
 		 *
 		 */
 		private static final long	serialVersionUID	= 4593115469915216836L;
 
 		private final JPanel		contentPane;
-		
+
 		private final JTextPane		questionPane;
-		
+
 		private final JTextPane		scorePane;
 
 		/**
@@ -112,7 +112,7 @@ public final class Game
 				URISyntaxException
 		{
 			this.setResizable(false);
-			this.setTitle(Game.getNewTitle());
+			this.setTitle(Game.this.getNewTitle());
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.setBounds(100, 100, 500, 460);
 			this.contentPane = new JPanel();
@@ -134,7 +134,7 @@ public final class Game
 				@Override
 				public void mousePressed(final MouseEvent e)
 				{
-					Game.instance().restartApplication();
+					Game.this.restartApplication();
 				}
 			});
 			mnFile.add(mntmRefreshApplication);
@@ -148,7 +148,7 @@ public final class Game
 				@Override
 				public void mousePressed(final MouseEvent e)
 				{
-					Game.instance().shutdown();
+					Game.this.shutdown();
 				}
 			});
 			mnFile.add(mntmExit);
@@ -198,7 +198,7 @@ public final class Game
 				@Override
 				public void mousePressed(final MouseEvent e)
 				{
-					Game.instance().showAboutWindow();
+					Game.this.showAboutWindow();
 				}
 			});
 			mnMeta.add(mntmAbout);
@@ -211,10 +211,9 @@ public final class Game
 				{
 					try
 					{
-						Game.instance()
-								.getPlayer()
-								.choose(Game.instance().getQuestions()
-										.getCurrentQuestion(), Choice.A);
+						Game.this.getPlayer().choose(
+								Game.this.getQuestions().getCurrentQuestion(),
+								Choice.A);
 					}
 					catch (final IOException e1)
 					{
@@ -238,10 +237,9 @@ public final class Game
 				{
 					try
 					{
-						Game.instance()
-								.getPlayer()
-								.choose(Game.instance().getQuestions()
-										.getCurrentQuestion(), Choice.B);
+						Game.this.getPlayer().choose(
+								Game.this.getQuestions().getCurrentQuestion(),
+								Choice.B);
 					}
 					catch (final IOException e1)
 					{
@@ -265,10 +263,9 @@ public final class Game
 				{
 					try
 					{
-						Game.instance()
-								.getPlayer()
-								.choose(Game.instance().getQuestions()
-										.getCurrentQuestion(), Choice.C);
+						Game.this.getPlayer().choose(
+								Game.this.getQuestions().getCurrentQuestion(),
+								Choice.C);
 					}
 					catch (final IOException e1)
 					{
@@ -292,10 +289,9 @@ public final class Game
 				{
 					try
 					{
-						Game.instance()
-								.getPlayer()
-								.choose(Game.instance().getQuestions()
-										.getCurrentQuestion(), Choice.D);
+						Game.this.getPlayer().choose(
+								Game.this.getQuestions().getCurrentQuestion(),
+								Choice.D);
 					}
 					catch (final IOException e1)
 					{
@@ -317,7 +313,7 @@ public final class Game
 			this.questionPane.setEditable(false);
 			this.questionPane.setBounds(15, 37, 467, 257);
 			this.contentPane.add(this.questionPane);
-			
+
 			this.scorePane = new JTextPane();
 			this.scorePane.setFont(new Font("Arial Black", (this.scorePane
 					.getFont().getStyle() & ~Font.ITALIC) | Font.BOLD, 58));
@@ -333,13 +329,13 @@ public final class Game
 			this.contentPane.add(this.scorePane);
 			this.repaint();
 		}
-		
+
 		@Override
 		public JPanel getContentPane()
 		{
 			return this.contentPane;
 		}
-		
+
 		public String getQuestionPaneText()
 		{
 			return this.questionPane.getText();
@@ -355,7 +351,7 @@ public final class Game
 		{
 			try
 			{
-				this.setQuestionPaneText(Game.instance().getQuestions()
+				this.setQuestionPaneText(Game.this.getQuestions()
 						.getCurrentQuestion().getQuestionFormatted());
 			}
 			catch (final IOException e1)
@@ -368,20 +364,12 @@ public final class Game
 			}
 			try
 			{
-				this.setScorePaneText(""
-						+ Game.instance().getPlayer().getScore());
+				this.setScorePaneText("" + Game.this.getPlayer().getScore());
 			}
 			catch (final Exception e)
 			{
 				this.setScorePaneText("");
-				EventQueue.invokeLater(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						AppFrame.this.repaint();
-					}
-				});
+				EventQueue.invokeLater(() -> AppFrame.this.repaint());
 			}
 			super.repaint();
 		}
@@ -406,7 +394,7 @@ public final class Game
 	public static enum Choice
 	{
 		A, B, C, D;
-		
+
 		/**
 		 * @return the number corresponding to the given choice
 		 */
@@ -426,7 +414,7 @@ public final class Game
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * This class is procedurally generated using the eclipse windowbuilder
 	 */
@@ -436,17 +424,10 @@ public final class Game
 		 *
 		 */
 		private static final long	serialVersionUID	= 5487569515468347037L;
-		
-		private final JPanel		contentPane;
-		
-		private final JTextPane		textPane;
 
-		public EndFrame(final String endMessage)
-		{
-			this();
-			this.setTextPaneText(endMessage);
-			this.setTitle("Thanks for playing");
-		}
+		private final JPanel		contentPane;
+
+		private final JTextPane		textPane;
 
 		/**
 		 * Create the frame.
@@ -460,42 +441,48 @@ public final class Game
 			this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			this.setContentPane(this.contentPane);
 			this.contentPane.setLayout(null);
-			
+
 			this.textPane = new JTextPane();
 			this.textPane.setEditable(false);
 			this.textPane.setBounds(5, 5, 432, 222);
 			this.textPane.setFont(new Font("Arial Black", (this.textPane
-					.getFont()
-					.getStyle() & ~Font.ITALIC) | Font.BOLD, 25));
+					.getFont().getStyle() & ~Font.ITALIC) | Font.BOLD, 25));
 			final StyledDocument doc = this.textPane.getStyledDocument();
 			final SimpleAttributeSet center = new SimpleAttributeSet();
 			StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
 			doc.setParagraphAttributes(0, doc.getLength(), center, false);
 			this.contentPane.add(this.textPane);
-			
+
 			final JButton endGameButton = new JButton("End");
 			endGameButton.addMouseListener(new MouseAdapter()
 			{
 				@Override
 				public void mousePressed(final MouseEvent e)
 				{
-					Game.instance().shutdown();
+					Game.this.shutdown();
 				}
 			});
 			endGameButton.setBounds(5, 238, 89, 23);
 			this.contentPane.add(endGameButton);
-			
+
 			final JButton playAgainButton = new JButton("Play Again");
 			playAgainButton.addMouseListener(new MouseAdapter()
 			{
 				@Override
 				public void mousePressed(final MouseEvent e)
 				{
-					Game.instance().restartApplication();
+					Game.this.restartApplication();
 				}
 			});
 			playAgainButton.setBounds(345, 238, 89, 23);
 			this.contentPane.add(playAgainButton);
+		}
+
+		public EndFrame(final String endMessage)
+		{
+			this();
+			this.setTextPaneText(endMessage);
+			this.setTitle("Thanks for playing");
 		}
 
 		public String getTextPaneText()
@@ -520,7 +507,7 @@ public final class Game
 			super.setTitle(title);
 		}
 	}
-	
+
 	public final class Player
 	{
 		/**
@@ -562,9 +549,9 @@ public final class Game
 			if (this.score <= 0)
 			{
 				this.score = 0;
-				Game.instance().endGame(Reason.OUT_OF_POINTS);
+				Game.this.endGame(Reason.OUT_OF_POINTS);
 			}
-			Game.instance().getQuestions().nextQuestion();
+			Game.this.getQuestions().nextQuestion();
 		}
 
 		/**
@@ -584,51 +571,51 @@ public final class Game
 		}
 
 		/**
-		 * Part of the unfinished RUN feature
-		 */
-		public void run()
-		{
-			Game.LOGGER.info("RUN selected");
-		}
-
-		/**
 		 * Decrements the score
 		 */
 		private void incorrectAnswer()
 		{
 			this.score--;
 		}
+
+		/**
+		 * Part of the unfinished RUN feature
+		 */
+		public void run()
+		{
+			Game.LOGGER.info("RUN selected");
+		}
 	}
 
 	public final class Question
 	{
-		
+
 		/**
 		 * The four possible answers, in no particular order
 		 */
-		private List<String>	answers;
+		private List<String>	answers	= null;
 
 		/**
 		 * The correct answer
 		 */
-		private String			correct;
-		
+		private String			correct	= null;
+
 		/**
 		 * The numeric id for the question, used in debugging
 		 */
-		private final int		id;
-		
+		private int				id		= Integer.MIN_VALUE;
+
 		/**
 		 * The prompt for the question
 		 */
-		private String			prompt;
+		private String			prompt	= null;
 
 		public Question()
 		{
 			this.id = Game.questionCount;
 			Game.questionCount++;
 		}
-		
+
 		/**
 		 * @param choice
 		 *            the choice
@@ -638,7 +625,7 @@ public final class Game
 		{
 			return this.correct.equals(this.answers.get(choice.toIndex()));
 		}
-		
+
 		/**
 		 * @return a list of the answers
 		 */
@@ -646,7 +633,7 @@ public final class Game
 		{
 			return this.answers;
 		}
-		
+
 		/**
 		 * @return the correct answer
 		 */
@@ -654,7 +641,7 @@ public final class Game
 		{
 			return this.correct;
 		}
-		
+
 		/**
 		 * @return the prompt
 		 */
@@ -662,18 +649,16 @@ public final class Game
 		{
 			return this.prompt;
 		}
-		
+
 		/**
 		 * @return the question in it's fully formatted format, with the answers
-		 *         and
-		 *         linebreaks and stuff
+		 *         and linebreaks and stuff
 		 */
 		public String getQuestionFormatted()
 		{
 			return this.prompt + "\n\nA: " + this.answers.get(0) + "\nB: "
 					+ this.answers.get(1) + "\nC: " + this.answers.get(2)
-					+ "\nD: "
-					+ this.answers.get(3);
+					+ "\nD: " + this.answers.get(3);
 		}
 
 		/**
@@ -686,28 +671,43 @@ public final class Game
 			this.correct = this.answers.get(0);
 			Collections.shuffle(this.answers);
 		}
+
+		protected void setAnswers(final List<String> list)
+		{
+			this.answers = list;
+		}
+
+		protected void setCorrect(final String string)
+		{
+			this.correct = string;
+		}
+
+		protected void setPrompt(final String string)
+		{
+			this.prompt = string;
+		}
 	}
 
 	public final class Questions
 	{
+		/**
+		 * The current question
+		 */
+		private int				index	= 0;
+
 		/**
 		 * The questions
 		 */
 		public List<Question>	questions;
 
 		/**
-		 * The current question
-		 */
-		private int				index	= 0;
-		
-		/**
 		 * The version
 		 */
 		private int				version;
-		
+
 		public Questions()
 		{
-			
+
 		}
 
 		/**
@@ -717,7 +717,7 @@ public final class Game
 		{
 			return this.index + 1;
 		}
-		
+
 		/**
 		 * @return the current question
 		 * @throws URISyntaxException
@@ -733,11 +733,11 @@ public final class Game
 			catch (final IndexOutOfBoundsException e)
 			{
 				this.index--;
-				Game.instance().endGame(Reason.NO_MORE_QUESTIONS);
+				Game.this.endGame(Reason.NO_MORE_QUESTIONS);
 				return this.getCurrentQuestion();
 			}
 		}
-		
+
 		/**
 		 * @return the questions
 		 */
@@ -793,6 +793,11 @@ public final class Game
 	}
 
 	/**
+	 * The cli args
+	 */
+	private static String[]		args;
+
+	/**
 	 * The web address for the issue tracker
 	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
@@ -809,6 +814,11 @@ public final class Game
 	public static final String	PULL_REQUESTS			= "https://github.com/Commador/JavaTest/pulls";
 
 	/**
+	 * The number of questions, starting at 1
+	 */
+	private static int			questionCount			= 1;
+
+	/**
 	 * The path to the local questions json file
 	 */
 	public static final String	QUESTIONS_JSON_LOCAL	= "questions.json";
@@ -817,7 +827,7 @@ public final class Game
 	 * The web address for the remote questions json file
 	 */
 	public static final String	QUESTIONS_JSON_REMOTE	= "https://raw.githubusercontent.com/Commador/JavaTestQuestions/master/questions.json";
-	
+
 	/**
 	 * The repository for the questions
 	 */
@@ -832,77 +842,11 @@ public final class Game
 	 * The temporary directory path, and I can't remember what I wanted to do
 	 */
 	public static final String	TEMP					= ".jtest_temp/";
-	
+
 	/**
 	 * The title of the application
 	 */
 	public static final String	TITLE					= "JTest";
-	
-	/**
-	 * The cli args
-	 */
-	private static String[]		args;
-
-	/**
-	 * The instance of the game
-	 */
-	private static Game			instance;
-	
-	/**
-	 * The number of questions, starting at 1
-	 */
-	private static int			questionCount			= 1;
-
-	/**
-	 * @return a new instance of the local questions file
-	 */
-	public static File getLocalQuestionsFile()
-	{
-		return new File(Game.QUESTIONS_JSON_LOCAL);
-	}
-
-	/**
-	 * @return a new title, formatted, with a random splash appended to the end
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 * @throws JsonSyntaxException
-	 */
-	public static String getNewTitle() throws JsonSyntaxException, IOException,
-			URISyntaxException
-	{
-		return Game.TITLE + " - " + Splash.getSplash().getRandomSplash();
-	}
-	
-	/**
-	 * @return the remote questions
-	 */
-	public static Questions getRemoteQuestions()
-	{
-		try
-		{
-			final String json = WebUtilities.parseURLtoString(new URL(
-					Game.QUESTIONS_JSON_REMOTE));
-			final Gson gson = new Gson();
-			return gson.fromJson(json, Questions.class);
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
-		return Game.getRemoteQuestions();
-	}
-
-	/**
-	 * @return the instance of the game
-	 */
-	public static Game instance()
-	{
-		if (Game.instance == null)
-		{
-			Game.instance = new Game();
-		}
-		return Game.instance;
-	}
 
 	/**
 	 * Launches the application
@@ -910,8 +854,9 @@ public final class Game
 	public static void main(final String[] args)
 	{
 		Game.args = args;
-		Game.instance().initialize();
-		Game.instance().start();
+		final Game game = new Game();
+		game.initialize();
+		game.start();
 	}
 
 	/**
@@ -923,12 +868,12 @@ public final class Game
 	 * The primary application window
 	 */
 	private AppFrame	appFrame;
-	
+
 	/**
 	 * The end game application window
 	 */
 	private EndFrame	endFrame;
-	
+
 	/**
 	 * The player object
 	 */
@@ -957,7 +902,10 @@ public final class Game
 	 */
 	public void changeState(final State state)
 	{
-		if ((state == null) || (state == this.state)) { return; }
+		if ((state == null) || (state == this.state))
+		{
+			return;
+		}
 		if (this.state == null)
 		{
 			this.state = state;
@@ -1001,7 +949,7 @@ public final class Game
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Configure the questions object
 	 */
@@ -1013,7 +961,37 @@ public final class Game
 		}
 		Collections.shuffle(this.questions.questions);
 	}
-	
+
+	/**
+	 * Create the three gui frames
+	 */
+	private void createFrames()
+	{
+		try
+		{
+			this.appFrame = new AppFrame();
+		}
+		catch (final JsonSyntaxException e)
+		{
+			e.printStackTrace();
+			this.restartApplication();
+
+		}
+		catch (final IOException e)
+		{
+			e.printStackTrace();
+			this.restartApplication();
+
+		}
+		catch (final URISyntaxException e)
+		{
+			e.printStackTrace();
+			this.restartApplication();
+		}
+		this.endFrame = new EndFrame();
+		this.aboutFrame = new AboutFrame();
+	}
+
 	/**
 	 * Ends the game
 	 *
@@ -1038,7 +1016,7 @@ public final class Game
 		final EndFrame frame = new EndFrame(endMessage);
 		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * @return the end frame
 	 */
@@ -1046,7 +1024,27 @@ public final class Game
 	{
 		return this.endFrame;
 	}
-	
+
+	/**
+	 * @return a new instance of the local questions file
+	 */
+	public File getLocalQuestionsFile()
+	{
+		return new File(Game.QUESTIONS_JSON_LOCAL);
+	}
+
+	/**
+	 * @return a new title, formatted, with a random splash appended to the end
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws JsonSyntaxException
+	 */
+	public String getNewTitle() throws JsonSyntaxException, IOException,
+			URISyntaxException
+	{
+		return Game.TITLE + " - " + Splash.getSplash().getRandomSplash();
+	}
+
 	/**
 	 * @return the player object
 	 */
@@ -1054,7 +1052,7 @@ public final class Game
 	{
 		return this.player;
 	}
-	
+
 	/**
 	 * @return the local questions
 	 * @throws IOException
@@ -1064,7 +1062,10 @@ public final class Game
 	{
 		try
 		{
-			if (this.questions != null) { return this.questions; }
+			if (this.questions != null)
+			{
+				return this.questions;
+			}
 			final String json = Bytes.fromFile(
 					new File(Game.QUESTIONS_JSON_LOCAL)).toString();
 			final Gson gson = new Gson();
@@ -1082,6 +1083,25 @@ public final class Game
 			this.restartApplication();
 		}
 		return this.getQuestions();
+	}
+
+	/**
+	 * @return the remote questions
+	 */
+	public Questions getRemoteQuestions()
+	{
+		try
+		{
+			final String json = WebUtilities.parseURLtoString(new URL(
+					Game.QUESTIONS_JSON_REMOTE));
+			final Gson gson = new Gson();
+			return gson.fromJson(json, Questions.class);
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+		return this.getRemoteQuestions();
 	}
 
 	/**
@@ -1118,7 +1138,7 @@ public final class Game
 		this.player = new Player();
 		new File("questions.json").deleteOnExit();
 	}
-	
+
 	/**
 	 * Determines whether or not the questions need to be updated, updates them,
 	 * and then loads them as an instance of {@link Questions}
@@ -1155,15 +1175,11 @@ public final class Game
 	{
 		Game.LOGGER.info("Registering hooks and handlers");
 		Game.LOGGER.info("Registering the global event handler");
-		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
+		Thread.setDefaultUncaughtExceptionHandler((t, e) ->
 		{
-			@Override
-			public void uncaughtException(final Thread t, final Throwable e)
-			{
-				e.printStackTrace();
-				Game.LOGGER.info("Restarting due to an error...");
-				Game.instance().restartApplication();
-			}
+			e.printStackTrace();
+			Game.LOGGER.info("Restarting due to an error...");
+			this.restartApplication();
 		});
 	}
 
@@ -1199,7 +1215,7 @@ public final class Game
 		}
 		System.exit(0);
 	}
-	
+
 	/**
 	 * @return whether or not the application should update the questions, used
 	 *         back when the questions were cached locally
@@ -1208,7 +1224,7 @@ public final class Game
 	{
 		try
 		{
-			return Game.getRemoteQuestions().getVersion() > this.getQuestions()
+			return this.getRemoteQuestions().getVersion() > this.getQuestions()
 					.getVersion();
 		}
 		catch (final Exception e)
@@ -1225,7 +1241,7 @@ public final class Game
 	{
 		this.aboutFrame.setVisible(true);
 	}
-	
+
 	/**
 	 * Shutdown the application nicely
 	 */
@@ -1240,46 +1256,13 @@ public final class Game
 	 */
 	public void start()
 	{
-		EventQueue.invokeLater(new Runnable()
+		EventQueue
+		.invokeLater(() ->
 		{
-			@Override
-			public void run()
-			{
-				Game.this.changeState(State.RUNNING);
-				Game.LOGGER
-						.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
-			}
+			Game.this.changeState(State.RUNNING);
+			Game.LOGGER
+			.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
 		});
-	}
-
-	/**
-	 * Create the three gui frames
-	 */
-	private void createFrames()
-	{
-		try
-		{
-			this.appFrame = new AppFrame();
-		}
-		catch (final JsonSyntaxException e)
-		{
-			e.printStackTrace();
-			this.restartApplication();
-			
-		}
-		catch (final IOException e)
-		{
-			e.printStackTrace();
-			this.restartApplication();
-			
-		}
-		catch (final URISyntaxException e)
-		{
-			e.printStackTrace();
-			this.restartApplication();
-		}
-		this.endFrame = new EndFrame();
-		this.aboutFrame = new AboutFrame();
 	}
 
 }
