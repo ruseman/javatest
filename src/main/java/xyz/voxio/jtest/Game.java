@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.management.ManagementFactory;
 
 import javax.swing.JButton;
@@ -137,7 +138,7 @@ public final class Game implements Application
 				@Override
 				public void mousePressed(final MouseEvent e)
 				{
-					Game.this.restartApplication();
+					Game.this.restart();
 				}
 			});
 			mnFile.add(mntmRefreshApplication);
@@ -372,7 +373,7 @@ public final class Game implements Application
 			catch (final Exception e)
 			{
 				this.setScorePaneText("");
-				EventQueue.invokeLater(() -> AppFrame.this.repaint());
+				EventQueue.invokeLater(new Runnable(){public void run() {AppFrame.this.repaint();}});
 			}
 			super.repaint();
 		}
@@ -474,7 +475,7 @@ public final class Game implements Application
 				@Override
 				public void mousePressed(final MouseEvent e)
 				{
-					Game.this.restartApplication();
+					Game.this.restart();
 				}
 			});
 			playAgainButton.setBounds(345, 238, 89, 23);
@@ -796,11 +797,6 @@ public final class Game implements Application
 	}
 
 	/**
-	 * The cli args
-	 */
-	private static String[]		args;
-
-	/**
 	 * The web address for the issue tracker
 	 */
 	public static final String	ISSUES					= "https://github.com/Commador/JavaTest/issues";
@@ -856,9 +852,8 @@ public final class Game implements Application
 	 */
 	public static void main(final String[] args)
 	{
-		Game.args = args;
 		final Game game = new Game();
-		game.initialize();
+		game.initialize(args);
 		game.start();
 	}
 
@@ -986,19 +981,19 @@ public final class Game implements Application
 		catch (final JsonSyntaxException e)
 		{
 			e.printStackTrace();
-			this.restartApplication();
+			this.restart();
 
 		}
 		catch (final IOException e)
 		{
 			e.printStackTrace();
-			this.restartApplication();
+			this.restart();
 
 		}
 		catch (final URISyntaxException e)
 		{
 			e.printStackTrace();
-			this.restartApplication();
+			this.restart();
 		}
 		this.endFrame = new EndFrame();
 		this.aboutFrame = new AboutFrame();
@@ -1087,12 +1082,12 @@ public final class Game implements Application
 		catch (final JsonSyntaxException e)
 		{
 			e.printStackTrace();
-			this.restartApplication();
+			this.restart();
 		}
 		catch (final IOException e)
 		{
 			e.printStackTrace();
-			this.restartApplication();
+			this.restart();
 		}
 		return this.getQuestions();
 	}
@@ -1127,9 +1122,10 @@ public final class Game implements Application
 	/**
 	 * Initializes the application, creating the necessary objects
 	 */
-	public void initialize()
+	public void initialize(String[] args)
 	{
 		this.changeState(State.INITIALIZING);
+		this.args = args;
 		this.registerHooks();
 		Game.LOGGER.info("Loading the questions");
 		try
@@ -1139,7 +1135,7 @@ public final class Game implements Application
 		catch (final IOException e)
 		{
 			e.printStackTrace();
-			this.restartApplication();
+			this.restart();
 		}
 		this.configQuestions();
 		Game.LOGGER.info("Questions have been loaded");
@@ -1149,13 +1145,6 @@ public final class Game implements Application
 		Game.LOGGER.info("Creating a few objects...");
 		this.player = new Player();
 		new File("questions.json").deleteOnExit();
-	}
-
-	@Override
-	public void initialize(final String[] arg0)
-	{
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -1188,8 +1177,7 @@ public final class Game implements Application
 	@Override
 	public Meta meta()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Meta.getMeta(Game.class, "meta.json");
 	}
 
 	/**
@@ -1201,26 +1189,25 @@ public final class Game implements Application
 	{
 		Game.LOGGER.info("Registering hooks and handlers");
 		Game.LOGGER.info("Registering the global event handler");
-		Thread.setDefaultUncaughtExceptionHandler((t, e) ->
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
 		{
-			e.printStackTrace();
-			Game.LOGGER.info("Restarting due to an error...");
-			this.restartApplication();
+
+			@Override
+			public void uncaughtException(Thread t, Throwable e)
+			{
+				e.printStackTrace();
+				Game.LOGGER.info("Restarting due to an error...");
+				restart();
+			}
 		});
-	}
-
-	@Override
-	public void restart()
-	{
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
 	 * Restarts the application. this sometimes doesn't work, depending upon the
 	 * user's java configuration
 	 */
-	public void restartApplication()
+	@Override
+	public void restart()
 	{
 		try
 		{
@@ -1236,7 +1223,7 @@ public final class Game implements Application
 			.append(ManagementFactory.getRuntimeMXBean().getClassPath())
 			.append(" ");
 			cmd.append(Game.class.getName()).append(" ");
-			for (final String arg : Game.args)
+			for (final String arg : args)
 			{
 				cmd.append(arg).append(" ");
 			}
@@ -1248,6 +1235,8 @@ public final class Game implements Application
 		}
 		System.exit(0);
 	}
+	
+	private String[] args;
 
 	/**
 	 * @return whether or not the application should update the questions, used
@@ -1292,12 +1281,12 @@ public final class Game implements Application
 	public void start()
 	{
 		EventQueue
-				.invokeLater(() ->
+				.invokeLater(new Runnable(){public void run()
 				{
 					Game.this.changeState(State.RUNNING);
 					Game.LOGGER
 							.info("Things seem to be working.  If you're seeing this, it means that things haven't completely broken yet.");
-				});
+				}});
 	}
 
 }
